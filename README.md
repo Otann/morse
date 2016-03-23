@@ -1,6 +1,6 @@
-# morse
+# morse [![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield)](https://circleci.com/gh/Otann/morse)
 
-<img style="max-width: 25%;"
+<img width="30%"
      align="right" padding="5px"
      alt=":)"
      src="http://otann.com/media/projects/morse/signature.gif"/> 
@@ -11,9 +11,9 @@
 
 ## Installation
 
-Add `[datadog "1.0.0"]` to the dependency section in your project.clj file.
+Add `[morse "0.0.1"]` to the dependency section in your project.clj file.
 
-Import namespace:
+Import a namespace:
 
 ```clojure
 (require '[telegram.core :as telegram])
@@ -41,7 +41,7 @@ object from Telegram as a Clojure map:
 
 There two ways of providing your handlers to the API:
 
-1. Provide handlers in the initialization:
+### Provide handlers in the initialization:
 
 ```clojure
 (telegram/init! {:token (cfg/get :telegram-token)
@@ -49,7 +49,7 @@ There two ways of providing your handlers to the API:
                  :polling true})
 ```
                  
-2. Set them later, using a function
+### Or set them later, using a function
  
 ```clojure
 (require '[morse.handlers :as h]
@@ -61,6 +61,7 @@ you can also replace all existing handlers with provided vector:
 
 ```clojure
 (h/reset-handlers! [handler])
+```
  
 ## Receiving updates 
  
@@ -97,7 +98,7 @@ Use `morse.api` to interact with Telegram chats:
 
 Following methods from the API are implemented at the moment:
 
-* [sendMessage](https://core.telegram.org/bots/api#sendmessage)
+### [`sendMessage`](https://core.telegram.org/bots/api#sendmessage)
 
 ```clojure
 (api/send-text chat-id "Hello, fellows")
@@ -111,7 +112,7 @@ You can use advanced options:
                "**Hello**, fellows")
 ```
 
-* [sendPhoto](https://core.telegram.org/bots/api#sendphoto)
+### [`sendPhoto`](https://core.telegram.org/bots/api#sendphoto)
 
 File, ByteArray and InputStream are supported as images for that function:
  
