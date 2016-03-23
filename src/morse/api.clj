@@ -26,9 +26,10 @@
   "Sends message to the chat"
   ([chat-id text] (send-text chat-id {} text))
   ([chat-id options text]
-   (let [url   (str base-url @token "/sendMessage")
-         query (into {:chat_id chat-id :text text} options)]
-     (http/get url {:as :json :query-params query}))))
+   (let [url (str base-url @token "/sendMessage")
+         query (into {:chat_id chat-id :text text} options)
+         resp (http/get url {:as :json :query-params query})]
+     (-> resp :body))))
 
 (defn send-photo
   "Send image to the chat"
@@ -36,9 +37,10 @@
   ([chat-id options image]
    (let [url (str base-url @token "/sendPhoto")
          base-form [{:part-name "chat_id" :content (str chat-id)}
-                    {:part-name "photo"   :content image :name "photo.png"}]
+                    {:part-name "photo" :content image :name "photo.png"}]
          options-form (for [[key value] options]
-                           {:part-name (name key) :content value})
-         form (into base-form options-form)]
-     (http/post url {:as :json :multipart form}))))
+                        {:part-name (name key) :content value})
+         form (into base-form options-form)
+         resp (http/post url {:as :json :multipart form})]
+     (-> resp :body))))
 

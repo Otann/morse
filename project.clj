@@ -6,10 +6,13 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/core.async "0.2.374"]
                  [com.taoensso/timbre "4.1.4"]
+                 [cheshire "5.5.0"]
                  [clj-http "2.1.0"]]
 
   :profiles {:uberjar {:aot :all}
-             :test {:dependencies [[expectations "2.0.9"]]}}
+             :dev {:dependencies [[clj-http-fake "1.0.2"]]
+                   :plugins [[com.jakemccrary/lein-test-refresh "0.14.0"]
+                             [venantius/ultra "0.4.1"]]}}
 
   ;; Artifact deployment info
   :scm {:name "git"
