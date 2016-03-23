@@ -1,4 +1,4 @@
-# morse [![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield)](https://circleci.com/gh/Otann/morse)
+# morse [![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=1)](https://circleci.com/gh/Otann/morse)
 
 <img width="30%"
      align="right" padding="5px"
@@ -7,7 +7,7 @@
 
 `morse` is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
 
-[![Clojars Project](http://clojars.org/morse/latest-version.svg)](https://clojars.org/morse)
+[![Clojars Project](http://clojars.org/morse/latest-version.svg?&no-cache=1)](https://clojars.org/morse)
 
 ## Installation
 

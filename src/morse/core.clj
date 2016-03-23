@@ -20,5 +20,5 @@
   (cond
     polling (polling/start!)
     webhook (api/set-webhook webhook)
-    (log/warn "You haven't used any of the update-listening options. "
-              "Consider passing :polling or :webhook to init! function.")))
+    :default (log/warn "You haven't used any of the update-listening options. "
+                       "Consider passing :polling or :webhook to init! function.")))
