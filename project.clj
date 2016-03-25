@@ -10,8 +10,9 @@
                  [clj-http "2.1.0"]]
 
   :profiles {:uberjar {:aot :all}
-             :dev {:dependencies [[clj-http-fake "1.0.2"]]
-                   :plugins [[com.jakemccrary/lein-test-refresh "0.14.0"]
+             :dev {:dependencies [[expectations "2.1.4"]
+                                  [clj-http-fake "1.0.2"]]
+                   :plugins [[expectations "2.0.9"][com.jakemccrary/lein-test-refresh "0.14.0"]
                              [venantius/ultra "0.4.1"]]}}
 
   ;; Artifact deployment info
