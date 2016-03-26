@@ -1,5 +1,6 @@
 (ns morse.test-utils
-  (:require [clj-http.fake :refer [with-fake-routes]]
+  (:require [clojure.test :as t]
+            [clj-http.fake :refer [with-fake-routes]]
             [clojure.string :as s]
             [taoensso.timbre :as log]
             [cheshire.core :as json]))
@@ -20,8 +21,11 @@
   "Executes body, faking response from Telegram's
    /getUpdates method"
   [result & body]
-  `(let [response# {:status 200
-                    :body (json/generate-string {:result ~result})}]
+  `(let [result# (if (t/function? ~result)
+                   (~result)
+                   ~result)
+         response# {:status 200
+                    :body (json/generate-string {:result result#})}]
      (with-fake-routes {#"(.*)/getUpdates(.*)" (fn [_#] response#)}
       ~@body)))
 

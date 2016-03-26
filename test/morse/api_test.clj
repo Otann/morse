@@ -1,7 +1,5 @@
 (ns morse.api-test
   (:require [clojure.test :refer :all]
-            [clj-http.fake :refer [with-fake-routes]]
-            [cheshire.core :as json]
             [morse.api :as api]
             [morse.test-utils :as u]))
 
@@ -34,7 +32,7 @@
     ; check that "photo" has .jpg filename
     (is (->> body
              (find #(= (:part-name %) "photo"))
-             #(.endsWith % ".png")))))
+             (fn [^String s] (.endsWith s "png"))))))
 
 (deftest get-updates-request
   (is (= #{"timeout=1" "offset=0" "limit=100"}
