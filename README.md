@@ -16,7 +16,7 @@ Add `[morse "0.0.1"]` to the dependency section in your project.clj file.
 Import a namespace:
 
 ```clojure
-(require '[telegram.core :as telegram])
+(require '[morse.core :as telegram])
 ```
 
 Then somewhere, where you start your application, initialize API:
