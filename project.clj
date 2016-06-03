@@ -1,4 +1,4 @@
-(defproject morse "0.1.0-SNAPSHOT"
+(defproject morse "0.1.0"
   :description "Telegram Bot API"
 
   :url "https://github.com/otann/morse/"
@@ -21,6 +21,16 @@
 
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+
+  :release-tasks [["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["vcs" "commit"]
+                  ["vcs" "tag"]
+                  ["deploy" "clojars"]
+                  ["change" "version" "leiningen.release/bump-version"]
+                  ["vcs" "commit"]
+                  ["echo" "-e" "Now run:\\n\\n    lein vcs push\\n"]
+                  #_["vcs" "push"]]
 
   :pom-addition [:developers [:developer
                               [:name "Anton Chebotaev"]
