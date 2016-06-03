@@ -2,23 +2,21 @@
   (:require [clojure.test :refer :all]
             [clojure.core.async :refer [chan go >! <!!]]
             [morse.handlers :as h]
-            [morse.polling :as polling]
+            [morse.polling :as poll]
             [morse.test-utils :as u]))
 
-(defn update-with-text [text]
-  {:update_id 0
-   :message {:text text
-             :chat {:id "bar"}}})
+(def sample-update {:update_id 0
+                    :message {:text "foo"
+                              :chat {:id "bar"}}})
 
 (defn handler-for [channel]
-  (fn [update] (go (>! channel update))))
+  (fn [upd] (go (>! channel upd))))
 
 (deftest handler-receives-update
-  (let [update   (update-with-text "foo")
-        received (chan)
-        handler  (handler-for received)]
-    (u/with-faked-updates [update]
-      (h/reset-handlers! [handler])
-      (polling/start!)
-      (is (= update (<!! received)))
-      #_(polling/stop!))))
+  (u/with-faked-updates [sample-update]
+    (let [result  (chan)
+          handler (handler-for result)
+          running (poll/start "token" handler)]
+      (is (= sample-update (<!! result)))
+      (poll/stop running))))
+

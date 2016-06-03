@@ -33,7 +33,7 @@
   "Logs request to console and passes further on
    To be used in threading macro"
   [req]
-  (log/debug "request:" req)
+  (println "request:" req)
   req)
 
 (defn in?

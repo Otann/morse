@@ -3,20 +3,23 @@
             [morse.api :as api]
             [morse.test-utils :as u]))
 
+(def token "fake-token")
+(def chat-id 239)
+
 (deftest send-text-request
   (is (= #{"chat_id=239" "text=message"}
-         (-> (api/send-text 239 "message")
+         (-> (api/send-text token chat-id "message")
              (u/capture-request)
              (u/extract-query-set))))
 
   (is (= #{"chat_id=239" "text=message" "parse_mode=Markdown"}
-         (-> (api/send-text 239 {:parse_mode "Markdown"} "message")
+         (-> (api/send-text token chat-id {:parse_mode "Markdown"} "message")
              (u/capture-request)
              (u/extract-query-set)))))
 
 (deftest send-photo-request
   (let [data (byte-array (map byte "content"))
-        req  (-> (api/send-photo 239 data)
+        req  (-> (api/send-photo token chat-id data)
                  (u/capture-request))
         body (:multipart req)]
 
@@ -36,17 +39,17 @@
 
 (deftest get-updates-request
   (is (= #{"timeout=1" "offset=0" "limit=100"}
-         (-> (api/get-updates {})
+         (-> (api/get-updates token {})
              (u/capture-request)
              (u/extract-query-set))))
 
   (is (= #{"timeout=1" "offset=0" "limit=200"}
-         (-> (api/get-updates {:limit 200})
+         (-> (api/get-updates token {:limit 200})
              (u/capture-request)
              (u/extract-query-set))))
 
   (is (= #{"timeout=1" "offset=31337" "limit=100"}
-         (-> (api/get-updates {:offset 31337})
+         (-> (api/get-updates token {:offset 31337})
              (u/capture-request)
              (u/extract-query-set))))
 
@@ -54,4 +57,4 @@
     (let [updates {:foo "bar"}]
       (u/with-faked-updates updates
         (is (= updates
-               (api/get-updates {})))))))
+               (api/get-updates token {})))))))
