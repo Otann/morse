@@ -1,4 +1,6 @@
-# morse [![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=1)](https://circleci.com/gh/Otann/morse)
+# morse
+
+[![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=1)](https://circleci.com/gh/Otann/morse)
 
 <img width="30%"
      align="right" padding="5px"
@@ -11,82 +13,82 @@
 
 ## Installation
 
-Add `[morse "0.0.1"]` to the dependency section in your project.clj file.
-
-Import a namespace:
-
-```clojure
-(require '[morse.core :as telegram])
-```
-
-Then somewhere, where you start your application, initialize API:
- 
-```clojure
-(telegram/init! {:token "YOUR TELEGRAM TOKEN HERE"})
-```
+Add `[morse "0.1.0"]` to the dependency section in your project.clj file.
 
 ## Update Handlers
 
-To process updates, you should provide your handlers to the library.
-
-Handler is a function that receives [Update](https://core.telegram.org/bots/api#update) 
-object from Telegram as a Clojure map:
+Handler is a function that receives [Update](https://core.telegram.org/bots/api#update)
+object from Telegram as a Clojure map. Morse provides some helpers for you:
  
 ```clojure
-(defn handler [update]
-  (when-let [message (:message update)]
-    (api/send-message (-> update :message :chat :id)
-                      (str "Hi there! 😊"))))
-```                    
+(require '[morse.handlers :refer :all])
 
-There two ways of providing your handlers to the API:
+(defhandler bot-api
+  (command "start" {user :user} (println "User" user "joined"))
+  (command "chroma" message (handle-text message))
 
-### Provide handlers in the initialization:
-
-```clojure
-(telegram/init! {:token (cfg/get :telegram-token)
-                 :handlers [handler]
-                 :polling true})
-```
-                 
-### Or set them later, using a function
- 
-```clojure
-(require '[morse.handlers :as h]
-
-(h/add-handler! handler)
-``` 
-
-you can also replace all existing handlers with provided vector:
-
-```clojure
-(h/reset-handlers! [handler])
-```
- 
-## Receiving updates 
- 
-You can use two methods of receiving updates from Telegram:
-
-### Long Polling
-
-Pass `:polling true` to the `init!` function:
-
-```clojure
-(telegram/init! {:token "YOUR TELEGRAM TOKEN HERE"
-                 :polling true})
+  (mesage message (println "Intercepted message:" message)))
 ```
 
-This will start a separate thread that will listen to updates from API.
+There are two possible helpers for messages:
 
-### Webhook
+    (command <command-name> <binding> <body>)
+    (message <binding> <body>)
 
-If you already have a web-server, or don't want to consume extra or network, 
-you can set a webhook, which Telegram will call for sending updates. 
+Where binding is same as you use anywhere in Clojure and will be applied to
+[Message](https://core.telegram.org/bots/api#message) object.
+
+
+### Starting bot
+
+As Telegram documentation says, there are two ways of getting updates
+from the bot: webhook and long-polling.
+
+#### Webhook
+
+If you develop a web application, you can use api call to
+[register](https://core.telegram.org/bots/api#setwebhook) one of your endpoints in Telegram:
 
 ```clojure
-(telegram/init! {:token "YOUR TELEGRAM TOKEN HERE"
-                 :webhook "http://example.com/telegram-hook"})
+(require '[morse.api :as api])
+
+(api/set-webhook "abc:XXX" "http://example.com/handler")
 ```
+
+Telegram will use this url to `POST` messages to it.
+You can also use handler to react on these messages.
+Here is quick example if you use [`compojure`](https://github.com/weavejester/compojure):
+
+```clojure
+(defhandler bot-api
+  (command "help" {{id :chat_id} :message}
+    (api/send-message token id "Help is on the way")))
+
+(defroutes app-routes
+  (POST "/handler" {body :body} (bot-api handler))
+  (route/not-found "Not Found"))
+```
+
+#### Long-polling
+
+This solution works perfectly if you don't plan on having a webserver
+or want to test your bot from a local machine.
+
+Start the process by simply calling `start` function and pass it token and your handler:
+
+```clojure
+(require '[morse.polling :as p])
+
+(def channel
+  (p/start token handler))
+```
+
+Then if you want to stop created background processes, call stop on returned channel:
+
+```clojure
+(p/stop channel)
+```
+
 
 ## Sending messages
 
@@ -101,13 +103,13 @@ Following methods from the API are implemented at the moment:
 ### [`sendMessage`](https://core.telegram.org/bots/api#sendmessage)
 
 ```clojure
-(api/send-text chat-id "Hello, fellows")
+(api/send-text token chat-id "Hello, fellows")
 ```
 
 You can use advanced options:
 
 ```clojure
-(api/send-text chat-id
+(api/send-text token chat-id
                {:parse_mode "Markdown"}
                "**Hello**, fellows")
 ```
@@ -118,13 +120,15 @@ File, ByteArray and InputStream are supported as images for that function:
  
 ```clojure
 (require '[clojure.java.io :as io])
-(api/send-photo chat-id (io/file (io/resource "photo.png")))
+
+(api/send-photo token chat-id
+                (io/file (io/resource "photo.png")))
 ```
 
 You can use advanced options:
 
 ```clojure
-(api/send-photo chat-id
+(api/send-photo token chat-id
                 {:caption "Here is a map:"}
                 (io/file (io/resource "map.png")))
 ```

@@ -2,7 +2,6 @@
   (:require [clojure.test :as t]
             [clj-http.fake :refer [with-fake-routes]]
             [clojure.string :as s]
-            [taoensso.timbre :as log]
             [cheshire.core :as json]))
 
 (defmacro capture-request

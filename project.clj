@@ -1,9 +1,10 @@
-(defproject morse "0.0.1-SNAPSHOT"
+(defproject morse "0.1.0-SNAPSHOT"
   :description "Telegram Bot API"
 
   :url "https://github.com/otann/morse/"
 
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/tools.macro "0.1.5"]
                  [org.clojure/core.async "0.2.374"]
                  [cheshire "5.5.0"]
                  [clj-http "2.1.0"]]
