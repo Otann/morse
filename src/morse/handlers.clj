@@ -17,7 +17,7 @@
 (defmacro defhandler
   "Define a Telegram handler function from a sequence of handlers.
   The name may optionally be followed by a doc-string and metadata map."
-  [name routes]
+  [name & routes]
   (let [[name routes] (macro/name-with-attributes name routes)]
     `(def ~name (handlers ~@routes))))
 
