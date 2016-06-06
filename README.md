@@ -65,7 +65,7 @@ Here is quick example if you use [`compojure`](https://github.com/weavejester/co
     (api/send-message token id "Help is on the way")))
 
 (defroutes app-routes
-  (POST "/handler" {body :body} (bot-api handler))
+  (POST "/handler" {{updates :result} :body} (map bot-api updates))
   (route/not-found "Not Found"))
 ```
 
