@@ -13,7 +13,7 @@
 
 ## Installation
 
-Add `[morse "0.1.0"]` to the dependency section in your project.clj file.
+Add `[morse "0.1.1"]` to the dependency section in your project.clj file.
 
 ## Update Handlers
 
