@@ -79,8 +79,7 @@ Start the process by simply calling `start` function and pass it token and your 
 ```clojure
 (require '[morse.polling :as p])
 
-(def channel
-  (p/start token handler))
+(def channel (p/start token handler))
 ```
 
 Then if you want to stop created background processes, call stop on returned channel:
