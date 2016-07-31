@@ -1,4 +1,4 @@
-(defproject morse "0.1.1-SNAPSHOT"
+(defproject morse "0.1.2-SNAPSHOT"
   :description "Telegram Bot API"
 
   :url "https://github.com/otann/morse/"
@@ -29,8 +29,7 @@
                   ["deploy" "clojars"]
                   ["change" "version" "leiningen.release/bump-version"]
                   ["vcs" "commit"]
-                  ["echo" "-e" "Now run:\\n\\n    lein vcs push\\n"]
-                  #_["vcs" "push"]]
+                  ["echo" "-e" "Now run:\\n\\n    lein vcs push\\n"]]
 
   :pom-addition [:developers [:developer
                               [:name "Anton Chebotaev"]
