@@ -1,5 +1,6 @@
 (ns morse.api
-  (:require [clj-http.client :as http]))
+  (:require [clj-http.client :as http]
+            [clojure.string :as string]))
 
 (def base-url "https://api.telegram.org/bot")
 
@@ -29,16 +30,35 @@
          resp (http/get url {:as :json :query-params query})]
      (-> resp :body))))
 
-(defn send-photo
-  "Send image to the chat"
-  ([token chat-id image] (send-photo token chat-id {} image))
-  ([token chat-id options image]
-   (let [url (str base-url token "/sendPhoto")
+(defn send-file 
+  ([token chat-id file method field filename] 
+   (send-file token chat-id {} file method field filename))
+  ([token chat-id options file method field filename]
+   (let [url (str base-url token method)
          base-form [{:part-name "chat_id" :content (str chat-id)}
-                    {:part-name "photo" :content image :name "photo.png"}]
+                    {:part-name field :content file :name filename}]
          options-form (for [[key value] options]
                         {:part-name (name key) :content value})
          form (into base-form options-form)
          resp (http/post url {:as :json :multipart form})]
      (-> resp :body))))
 
+(defmacro accepted-formats [file extensions & body]
+  `(if ~(conj (map (fn [extension] `(.endsWith (.getName ~file) ~extension)) extensions) `or)
+     (do ~@body)
+     (throw (ex-info (str "Telegram API only supports the following formats: " ~(string/join ", " extensions) " for this method. Other formats may be sent with send-document") {}))))
+
+(defn send-photo [token chat-id image]
+  (accepted-formats image ["jpg" "jpeg" "gif" "png" "tif" "bmp"] 
+    (send-file token chat-id image "/sendPhoto" "photo" "photo.png")))
+
+(defn send-document [token chat-id document]
+  (send-file token chat-id document "/sendDocument" "document" "document"))
+
+(defn send-video [token chat-id video]
+  (accepted-formats video ["mp4"] 
+    (send-file token chat-id video "/sendVideo" "video" "video.mp4")))
+
+(defn send-audio [token chat-id audio]
+  (accepted-formats audio ["mp3"] 
+    (send-file token chat-id audio "/sendAudio" "audio" "audio.mp3")))
