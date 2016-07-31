@@ -43,10 +43,17 @@
          resp (http/post url {:as :json :multipart form})]
      (-> resp :body))))
 
-(defmacro accepted-formats [file extensions & body]
-  `(if ~(conj (map (fn [extension] `(.endsWith (.getName ~file) ~extension)) extensions) `or)
+(defmacro accepted-formats [file valid-extensions & body]
+  "If file is an instance of java.io.File, it checks its extension is valid.
+  Only files are checked, if the file argument is not an instance of File
+  the check will be omitted." 
+  `(if (or (not= (type ~file) java.io.File) 
+           ~@(map (fn [extension] `(.endsWith (.getName ~file) ~extension)) valid-extensions))
      (do ~@body)
-     (throw (ex-info (str "Telegram API only supports the following formats: " ~(string/join ", " extensions) " for this method. Other formats may be sent with send-document") {}))))
+     (throw (ex-info (str "Telegram API only supports the following formats: " 
+                          ~(string/join ", " valid-extensions) 
+                          " for this method. Other formats may be sent with send-document") 
+                     {}))))
 
 (defn send-photo [token chat-id image]
   (accepted-formats image ["jpg" "jpeg" "gif" "png" "tif" "bmp"] 
