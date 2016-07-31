@@ -26,6 +26,9 @@
     (is (= (start-handler {:message (command-message "help")})
            nil))
 
+    (is (= (start-handler {:message (command-message "st")})
+           nil))
+
     (is (= (start-handler {:inline (inline-query "Kitten")})
            nil))))
 

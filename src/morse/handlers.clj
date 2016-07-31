@@ -22,11 +22,20 @@
     `(def ~name (handlers ~@routes))))
 
 
-(defn command? [update name]
-  (some-> update :message :text (s/starts-with? (str "/" name))))
+(defn command?
+  "Checks if message is a command with a name.
+  /stars and /st are considered different."
+  [update name]
+  (some-> update
+          :message
+          :text
+          (s/split #"\s+")
+          (first)
+          (= (str "/" name))))
 
 
-(defmacro command "Generate command handler"
+(defmacro command
+  "Generate command handler"
   [name bindings & body]
   `(fn [update#]
      (if (command? update# ~name)
@@ -41,17 +50,19 @@
        (let [~binding data#] ~@body))))
 
 
-(defmacro message "Generate command handler"
+(defmacro message
+  "Generate command handler"
   [bindings & body]
   (compile-handler :message bindings body))
 
 
-(defmacro inline "Generate command handler"
+(defmacro inline
+  "Generate command handler"
   [bindings & body]
   (compile-handler :inline_query bindings body))
 
 
-(comment
+(comment "Examples of how to use handler definitions"
 
   (defhandler bot-api
     (command "start" {user :user} (println "User" user "joined"))

@@ -1,7 +1,6 @@
 (ns morse.polling-test
   (:require [clojure.test :refer :all]
             [clojure.core.async :refer [chan go >! <!!]]
-            [morse.handlers :as h]
             [morse.polling :as poll]
             [morse.test-utils :as u]))
 
