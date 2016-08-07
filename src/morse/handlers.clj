@@ -2,6 +2,7 @@
   [:require [clojure.string :as s]
             [clojure.tools.macro :as macro]])
 
+
 (defn handling
   "Apply list of handlers to Telegram update"
   [request & handlers]

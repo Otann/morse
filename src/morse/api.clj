@@ -1,8 +1,11 @@
 (ns morse.api
   (:require [clj-http.client :as http]
-            [clojure.string :as string]))
+            [clojure.string :as string])
+  (:import (java.io File)))
+
 
 (def base-url "https://api.telegram.org/bot")
+
 
 (defn get-updates
   "Receive updates from Bot via long-polling endpoint"
@@ -14,12 +17,14 @@
         resp (http/get url {:as :json :query-params query})]
     (-> resp :body :result)))
 
+
 (defn set-webhook
   "Register WebHook to receive updates from chats"
   [token webhook-url]
   (let [url   (str base-url @token "/setWebhook")
         query {:url webhook-url}]
     (http/get url {:as :json :query-params query})))
+
 
 (defn send-text
   "Sends message to the chat"
@@ -29,6 +34,7 @@
          query (into {:chat_id chat-id :text text} options)
          resp (http/get url {:as :json :query-params query})]
      (-> resp :body))))
+
 
 (defn send-file [token chat-id options file method field filename]
   "Helper function to send various kinds of files as multipart-encoded"
@@ -41,21 +47,30 @@
         resp (http/post url {:as :json :multipart form})]
     (-> resp :body)))
 
+
 (defn is-file? 
   "Is value a file?" 
-  [value] (= java.io.File (type value)))
+  [value] (= File (type value)))
+
+
 (defn of-type? 
-  "Does the extension of file match any of the extensions in valid-extensions?"
-  [file valid-extensions] (some #(.endsWith (.getName file) %) valid-extensions))
-(defn assert-file-type 
+  "Does the extension of file match any of the
+  extensions in valid-extensions?"
+  [file valid-extensions]
+  (some #(-> file .getName (.endsWith %))
+        valid-extensions))
+
+
+(defn assert-file-type
   "Throws if value is a file but it's extension is not valid."
   [value valid-extensions]
   (when (and (is-file? value)
-             (not (of-type? valid-extensions)))
-    (throw (ex-info (str "Telegram API only supports the following formats: " 
+             (not (of-type? value valid-extensions)))
+    (throw (ex-info (str "Telegram API only supports the following formats: "
                          (string/join ", " valid-extensions) 
-                         " for this method. Other formats may be sent using send-document") 
+                         " for this method. Other formats may be sent using send-document")
                     {}))))
+
 
 (defn send-photo 
   "Sends an image to the chat"
@@ -64,11 +79,13 @@
    (assert-file-type image ["jpg" "jpeg" "gif" "png" "tif" "bmp"]) 
    (send-file token chat-id options image "/sendPhoto" "photo" "photo.png")))
 
+
 (defn send-document 
   "Sends a document to the chat"
   ([token chat-id document] (send-document token chat-id {} document))
   ([token chat-id options document]
    (send-file token chat-id options document "/sendDocument" "document" "document")))
+
 
 (defn send-video 
   "Sends a video to the chat"
@@ -76,6 +93,7 @@
   ([token chat-id options video]
    (assert-file-type video ["mp4"]) 
    (send-file token chat-id options video "/sendVideo" "video" "video.mp4")))
+
 
 (defn send-audio 
   "Sends an audio message to the chat"

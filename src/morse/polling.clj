@@ -4,12 +4,14 @@
                                         >!! <! close! alts!!]]
             [morse.api :as api]))
 
+
 (defn new-offset
   "Returns new offset for Telegram updates"
   [updates default]
   (if (seq updates)
     (-> updates last :update_id inc)
     default))
+
 
 (defn create-producer
   "Passed channel should be always empty.
@@ -27,6 +29,7 @@
                 (recur (new-offset result offset)))))))
     updates))
 
+
 (defn create-consumer
   "Creates consumer from given handler function
    and channel wuth updates.
@@ -41,14 +44,15 @@
       (handler data)
       (recur))))
 
+
 (defn start
   "Starts long-polling process"
   [token handler]
-
   (let [running (chan)
         updates (create-producer running token)]
     (create-consumer updates handler)
     running))
+
 
 (defn stop
   "Stops everything"
