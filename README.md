@@ -115,7 +115,6 @@ You can use advanced options:
 
 ### [`sendPhoto`](https://core.telegram.org/bots/api#sendphoto)
 
-File, ByteArray and InputStream are supported as images for that function:
 This sends a photo that will be displayed using the embedded image viewer where available.
  
 ```clojure
