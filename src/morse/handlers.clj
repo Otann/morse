@@ -69,7 +69,7 @@
     (command "start" {user :user} (println "User" user "joined"))
     (command "chroma" message (handle-text message))
 
-    (mesage message (println "Intercepted message:" message))
+    (message message (println "Intercepted message:" message))
 
     (inline {user :from q :query} (println "User" user "made inline query" q)))
 
