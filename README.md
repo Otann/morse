@@ -27,7 +27,7 @@ object from Telegram as a Clojure map. Morse provides some helpers for you:
   (command "start" {user :user} (println "User" user "joined"))
   (command "chroma" message (handle-text message))
 
-  (mesage message (println "Intercepted message:" message)))
+  (message message (println "Intercepted message:" message)))
 ```
 
 There are two possible helpers for messages:
