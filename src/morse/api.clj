@@ -21,7 +21,7 @@
 (defn set-webhook
   "Register WebHook to receive updates from chats"
   [token webhook-url]
-  (let [url   (str base-url @token "/setWebhook")
+  (let [url   (str base-url token "/setWebhook")
         query {:url webhook-url}]
     (http/get url {:as :json :query-params query})))
 
