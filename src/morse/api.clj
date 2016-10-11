@@ -107,5 +107,5 @@
   "Sends a sticker to the chat"
   ([token chat-id sticker] (send-sticker token chat-id {} sticker))
   ([token chat-id options sticker]
-   (assert-file-type image ["webp"])
-   (send-file token chat-id options image "/sendSticker" "sticker" "sticker.webp")))
+   (assert-file-type sticker ["webp"])
+   (send-file token chat-id options sticker "/sendSticker" "sticker" "sticker.webp")))
