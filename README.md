@@ -13,7 +13,7 @@
 
 ## Installation
 
-Add `[morse "0.1.1"]` to the dependency section in your project.clj file.
+Add `[morse "0.2.0"]` to the dependency section in your project.clj file.
 
 ## Update Handlers
 
@@ -61,8 +61,8 @@ Here is quick example if you use [`compojure`](https://github.com/weavejester/co
 
 ```clojure
 (defhandler bot-api
-  (command "help" {{id :chat_id} :message}
-    (api/send-message token id "Help is on the way")))
+  (command "help" {{id :id} :chat}
+    (api/send-text token id "Help is on the way")))
 
 (defroutes app-routes
   (POST "/handler" {{updates :result} :body} (map bot-api updates))
