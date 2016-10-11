@@ -101,3 +101,11 @@
   ([token chat-id options audio]
    (assert-file-type audio ["mp3"]) 
    (send-file token chat-id options audio "/sendAudio" "audio" "audio.mp3")))
+
+
+(defn send-sticker
+  "Sends a sticker to the chat"
+  ([token chat-id sticker] (send-sticker token chat-id {} sticker))
+  ([token chat-id options sticker]
+   (assert-file-type image ["webp"])
+   (send-file token chat-id options image "/sendSticker" "sticker" "sticker.webp")))

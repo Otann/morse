@@ -151,6 +151,15 @@ Sends the given mp3 file as an audio message to the chat.
                 (io/file (io/resource "audio.mp3")))
 ```
 
+### [`sendSticker`](https://core.telegram.org/bots/api#sendsticker)
+
+Sends the given WebP image as a sticker to the chat.
+
+```clojure
+(api/send-sticker token chat-id
+                  (io/file (io/resource "sticker.webp")))
+```
+
 ### [`sendDocument`](https://core.telegram.org/bots/api#senddocument)
 
 This method can be used for any other kind of file not supported by the other methods, or if you don't want telegram to make a special handling of your file (i.e. sending music as a voice message).
