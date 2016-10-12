@@ -9,7 +9,7 @@
 
 `morse` is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
 
-[![Clojars Project](http://clojars.org/morse/latest-version.svg?&no-cache=3)](https://clojars.org/morse)
+[![Clojars Project](http://clojars.org/morse/latest-version.svg?&no-cache=4)](https://clojars.org/morse)
 
 ## Installation
 
