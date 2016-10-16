@@ -1,5 +1,6 @@
 (ns morse.api-test
-  (:require [clojure.test :refer :all]
+  (:require [cheshire.core :as json]
+            [clojure.test :refer :all]
             [morse.api :as api]
             [morse.test-utils :as u]))
 
@@ -7,15 +8,22 @@
 (def chat-id 239)
 
 (deftest send-text-request
-  (is (= #{"chat_id=239" "text=message"}
-         (-> (api/send-text token chat-id "message")
-             (u/capture-request)
-             (u/extract-query-set))))
+  (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
+        req (-> (api/send-text token chat-id options "message")
+                (u/capture-request))
+        body (json/decode (slurp (:body req)) true)]
 
-  (is (= #{"chat_id=239" "text=message" "parse_mode=Markdown"}
-         (-> (api/send-text token chat-id {:parse_mode "Markdown"} "message")
-             (u/capture-request)
-             (u/extract-query-set)))))
+    ; check that it is now post request
+    (is (= :post (:request-method req)))
+
+    ; check that default params are presented
+    (is (u/has-subset? {:chat_id 239 :text "message"} [body]))
+
+    ; check that a flat option has encoded
+    (is (u/has-subset? {:parse_mode "Markdown"} [body]))
+
+    ; check that a nested option has encoded
+    (is (u/has-subset? {:reply_markup {:keyboard [[{:text "button"}]]}} [body]))))
 
 (deftest send-photo-request
   (let [data (byte-array (map byte "content"))
