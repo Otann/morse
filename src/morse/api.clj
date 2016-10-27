@@ -31,8 +31,10 @@
   ([token chat-id text] (send-text token chat-id {} text))
   ([token chat-id options text]
    (let [url (str base-url token "/sendMessage")
-         query (into {:chat_id chat-id :text text} options)
-         resp (http/get url {:as :json :query-params query})]
+         body (into {:chat_id chat-id :text text} options)
+         resp (http/post url {:content-type :json
+                              :as :json
+                              :form-params body})]
      (-> resp :body))))
 
 
