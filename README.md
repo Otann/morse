@@ -9,11 +9,11 @@
 
 `morse` is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
 
-[![Clojars Project](http://clojars.org/morse/latest-version.svg?&no-cache=4)](https://clojars.org/morse)
+[![Clojars Project](http://clojars.org/morse/latest-version.svg?&no-cache=5)](https://clojars.org/morse)
 
 ## Installation
 
-Add `[morse "0.2.1"]` to the dependency section in your project.clj file.
+Add `[morse "0.2.2"]` to the dependency section in your project.clj file.
 
 ## Update Handlers
 
