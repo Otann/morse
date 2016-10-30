@@ -5,7 +5,7 @@
 <img width="30%"
      align="right" padding="5px"
      alt=":)"
-     src="http://otann.com/media/projects/morse/signature.gif"/> 
+     src="http://otann.github.io/media/projects/morse/signature.gif"/> 
 
 `morse` is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
 
