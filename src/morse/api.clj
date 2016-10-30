@@ -38,17 +38,17 @@
      (-> resp :body))))
 
 (defn edit-text
-      "https://core.telegram.org/bots/api#editmessagetext"
-      ([token chat-id message-id text] (edit-text token chat-id message-id {} text))
-      ([token chat-id message-id options text]
-        (let [url (str base-url token "/editMessageText")
-              query (into {:chat_id chat-id :text text :message_id message-id} options)
-              resp (http/post url {:content-type :json
-                                   :as :json
-                                   :form-params query})
-              ]
-             (-> resp
-                 :body))))
+  "Edits a sent message
+  (https://core.telegram.org/bots/api#editmessagetext)"
+  ([token chat-id message-id text] (edit-text token chat-id message-id {} text))
+  ([token chat-id message-id options text]
+    (let [url (str base-url token "/editMessageText")
+          query (into {:chat_id chat-id :text text :message_id message-id} options)
+          resp (http/post url {:content-type :json
+                               :as :json
+                               :form-params query})
+          ]
+         (-> resp :body))))
 
 (defn send-file [token chat-id options file method field filename]
   "Helper function to send various kinds of files as multipart-encoded"
