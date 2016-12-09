@@ -32,6 +32,8 @@
           :text
           (s/split #"\s+")
           (first)
+          (s/split #"@")
+          (first)
           (= (str "/" name))))
 
 
