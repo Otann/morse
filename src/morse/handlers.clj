@@ -64,6 +64,10 @@
   [bindings & body]
   (compile-handler :inline_query bindings body))
 
+(defmacro callback
+  "Generate callback query handler"
+  [bindings & body]
+  (compile-handler :callback_query bindings body))
 
 (comment "Examples of how to use handler definitions"
 
