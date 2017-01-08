@@ -62,12 +62,12 @@
     (-> resp :body)))
 
 
-(defn is-file? 
-  "Is value a file?" 
+(defn is-file?
+  "Is value a file?"
   [value] (= File (type value)))
 
 
-(defn of-type? 
+(defn of-type?
   "Does the extension of file match any of the
   extensions in valid-extensions?"
   [file valid-extensions]
@@ -81,39 +81,39 @@
   (when (and (is-file? value)
              (not (of-type? value valid-extensions)))
     (throw (ex-info (str "Telegram API only supports the following formats: "
-                         (string/join ", " valid-extensions) 
+                         (string/join ", " valid-extensions)
                          " for this method. Other formats may be sent using send-document")
                     {}))))
 
 
-(defn send-photo 
+(defn send-photo
   "Sends an image to the chat"
   ([token chat-id image] (send-photo token chat-id {} image))
-  ([token chat-id options image] 
-   (assert-file-type image ["jpg" "jpeg" "gif" "png" "tif" "bmp"]) 
+  ([token chat-id options image]
+   (assert-file-type image ["jpg" "jpeg" "gif" "png" "tif" "bmp"])
    (send-file token chat-id options image "/sendPhoto" "photo" "photo.png")))
 
 
-(defn send-document 
+(defn send-document
   "Sends a document to the chat"
   ([token chat-id document] (send-document token chat-id {} document))
   ([token chat-id options document]
    (send-file token chat-id options document "/sendDocument" "document" "document")))
 
 
-(defn send-video 
+(defn send-video
   "Sends a video to the chat"
   ([token chat-id video] (send-video token chat-id {} video))
   ([token chat-id options video]
-   (assert-file-type video ["mp4"]) 
+   (assert-file-type video ["mp4"])
    (send-file token chat-id options video "/sendVideo" "video" "video.mp4")))
 
 
-(defn send-audio 
+(defn send-audio
   "Sends an audio message to the chat"
   ([token chat-id audio] (send-audio token chat-id {} audio))
   ([token chat-id options audio]
-   (assert-file-type audio ["mp3"]) 
+   (assert-file-type audio ["mp3"])
    (send-file token chat-id options audio "/sendAudio" "audio" "audio.mp3")))
 
 
@@ -123,3 +123,14 @@
   ([token chat-id options sticker]
    (assert-file-type sticker ["webp"])
    (send-file token chat-id options sticker "/sendSticker" "sticker" "sticker.webp")))
+
+(defn answer-inline
+  "Sends an answer to an inline query"
+  ([token inline-query-id results] (answer-inline token inline-query-id results {}))
+  ([token inline-query-id results options]
+    (let [url (str base-url token "/answerInlineQuery")
+          body (into {:inline_query_id inline-query-id :results results} options)
+          resp (http/post url {:content-type :json
+                               :as :json
+                               :form-params body})]
+     (-> resp :body))))

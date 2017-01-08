@@ -7,6 +7,7 @@
 (def token "fake-token")
 (def chat-id 239)
 (def message-id 1)
+(def inline-query-id 1337)
 
 (deftest send-text-request
          (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
@@ -87,3 +88,13 @@
       (u/with-faked-updates updates
         (is (= updates
                (api/get-updates token {})))))))
+
+(deftest answer-inline-request
+         (let [req (-> (api/answer-inline token inline-query-id [{:type "gif" :id 31337 :gif_url "gif.gif"}] {:is_personal true})
+                       (u/capture-request))
+               body (json/decode (slurp (:body req)) true)]
+
+              (is (= :post (:request-method req)))
+              (is (u/has-subset? {:inline_query_id inline-query-id} [body]))
+              (is (u/has-subset? {:results [{:type "gif" :id 31337 :gif_url "gif.gif"}]} [body]))
+              (is (u/has-subset? {:is_personal true} [body]))))
