@@ -90,7 +90,7 @@
                (api/get-updates token {})))))))
 
 (deftest answer-inline-request
-         (let [req (-> (api/answer-inline token inline-query-id [{:type "gif" :id 31337 :gif_url "gif.gif"}] {:is_personal true})
+         (let [req (-> (api/answer-inline token inline-query-id {:is_personal true} [{:type "gif" :id 31337 :gif_url "gif.gif"}])
                        (u/capture-request))
                body (json/decode (slurp (:body req)) true)]
 

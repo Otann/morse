@@ -126,8 +126,8 @@
 
 (defn answer-inline
   "Sends an answer to an inline query"
-  ([token inline-query-id results] (answer-inline token inline-query-id results {}))
-  ([token inline-query-id results options]
+  ([token inline-query-id results] (answer-inline token inline-query-id {} results))
+  ([token inline-query-id options results]
     (let [url (str base-url token "/answerInlineQuery")
           body (into {:inline_query_id inline-query-id :results results} options)
           resp (http/post url {:content-type :json
