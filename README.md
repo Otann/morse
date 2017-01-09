@@ -5,7 +5,7 @@
 <img width="30%"
      align="right" padding="5px"
      alt=":)"
-     src="http://otann.github.io/media/projects/morse/signature.gif"/> 
+     src="http://otann.github.io/media/projects/morse/signature.gif"/>
 
 `morse` is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
 
@@ -19,7 +19,7 @@ Add `[morse "0.2.2"]` to the dependency section in your project.clj file.
 
 Handler is a function that receives [Update](https://core.telegram.org/bots/api#update)
 object from Telegram as a Clojure map. Morse provides some helpers for you:
- 
+
 ```clojure
 (require '[morse.handlers :refer :all])
 
@@ -116,7 +116,7 @@ You can use advanced options:
 ### [`sendPhoto`](https://core.telegram.org/bots/api#sendphoto)
 
 This sends a photo that will be displayed using the embedded image viewer where available.
- 
+
 ```clojure
 (require '[clojure.java.io :as io])
 
@@ -131,7 +131,7 @@ You can use advanced options:
                 {:caption "Here is a map:"}
                 (io/file (io/resource "map.png")))
 ```
- 
+
 ### [`sendVideo`](https://core.telegram.org/bots/api#sendvideo)
 
 Sends the given mp4 file as a video to the chat which will be shown using the embedded player where available.
@@ -167,6 +167,17 @@ This method can be used for any other kind of file not supported by the other me
 ```clojure
 (api/send-document token chat-id
                    (io/file (io/resource "document.pdf")))
+```
+
+### [`answerInlineQuery`](https://core.telegram.org/bots/api#answerinlinequery)
+
+Sends an answer to an inline query.
+
+```clojure
+(api/answer-inline token inline-query-id options
+                   [{:type "gif"
+                     :id "gif1"
+                     :gif_url "http://funnygifs/gif.gif"}])
 ```
 
 ## License
