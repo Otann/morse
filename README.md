@@ -30,10 +30,12 @@ object from Telegram as a Clojure map. Morse provides some helpers for you:
   (message message (println "Intercepted message:" message)))
 ```
 
-There are two possible helpers for messages:
+Here's a list of all available handlers:
 
     (command <command-name> <binding> <body>)
     (message <binding> <body>)
+    (callback <binding> <body>)
+    (inline <binding> <body>)
 
 Where binding is same as you use anywhere in Clojure and will be applied to
 [Message](https://core.telegram.org/bots/api#message) object.
