@@ -1,13 +1,13 @@
-# morse
+# Morse
 
 [![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=2)](https://circleci.com/gh/Otann/morse)
 
 <img width="30%"
      align="right" padding="5px"
      alt=":)"
-     src="http://otann.github.io/media/projects/morse/signature.gif"/>
+     src="http://otann.github.io/media/projects/morse/signature.gif"/> 
 
-`morse` is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
+Morse is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
 
 [![Clojars Project](http://clojars.org/morse/latest-version.svg?&no-cache=5)](https://clojars.org/morse)
 
@@ -15,27 +15,56 @@
 
 Add `[morse "0.2.2"]` to the dependency section in your project.clj file.
 
-## Update Handlers
+## Detecting user's actions 
 
-Handler is a function that receives [Update](https://core.telegram.org/bots/api#update)
-object from Telegram as a Clojure map. Morse provides some helpers for you:
+Telegram sends updates about events in chats if form of
+[Update](https://core.telegram.org/bots/api#update) objects.
+
+Inside those there could be commands, inline queries and many more. 
+To help you with these Morse provides you helpers and some macros in
+`morse.handlers` namespace.
+
+If you are familiar with building web-service with Compojure,
+You'll find similarities here:
 
 ```clojure
-(require '[morse.handlers :refer :all])
+(ns user
+  (:require [morse.handlers :as h]
+            [morse.api :as t]))
+            
+(def token "YOUR-BIG-SECRET")          
 
-(defhandler bot-api
-  (command "start" {user :user} (println "User" user "joined"))
-  (command "chroma" message (handle-text message))
+; This will defint bot-api function, which later could be
+; used to start your bot
+(h/defhandler bot-api
+  ; Each bot has to handle /start and /help commands.
+  ; This could be done in form of a function:
+  (command-fn "start" (fn [{{id :id :as chat} :chat}]
+                        (println "Bot joined new chat: " chat)
+                        (t/send-text token id "Welcome!"))) 
+
+  ; You can use short syntax for same purposes
+  ; Destructuring works same way as in function above
+  (command "help" {{id :id :as chat} :chat}
+      (println "Help was requested in " chat)
+      (t/send-text token id "Help is on the way"))
+  
+  ; Handlers will be applied untill there is any of those
+  ; returns non-nil result processing update.
+  
+  ; Note that sending stuff to the user returns non-nil 
+  ; response from Telegram API.     
 
   (message message (println "Intercepted message:" message)))
+
 ```
 
-Here's a list of all available handlers:
+There
+
+There are two possible helpers for messages:
 
     (command <command-name> <binding> <body>)
     (message <binding> <body>)
-    (callback <binding> <body>)
-    (inline <binding> <body>)
 
 Where binding is same as you use anywhere in Clojure and will be applied to
 [Message](https://core.telegram.org/bots/api#message) object.
@@ -118,7 +147,7 @@ You can use advanced options:
 ### [`sendPhoto`](https://core.telegram.org/bots/api#sendphoto)
 
 This sends a photo that will be displayed using the embedded image viewer where available.
-
+ 
 ```clojure
 (require '[clojure.java.io :as io])
 
@@ -133,7 +162,7 @@ You can use advanced options:
                 {:caption "Here is a map:"}
                 (io/file (io/resource "map.png")))
 ```
-
+ 
 ### [`sendVideo`](https://core.telegram.org/bots/api#sendvideo)
 
 Sends the given mp4 file as a video to the chat which will be shown using the embedded player where available.
@@ -169,17 +198,6 @@ This method can be used for any other kind of file not supported by the other me
 ```clojure
 (api/send-document token chat-id
                    (io/file (io/resource "document.pdf")))
-```
-
-### [`answerInlineQuery`](https://core.telegram.org/bots/api#answerinlinequery)
-
-Sends an answer to an inline query.
-
-```clojure
-(api/answer-inline token inline-query-id options
-                   [{:type "gif"
-                     :id "gif1"
-                     :gif_url "http://funnygifs/gif.gif"}])
 ```
 
 ## License
