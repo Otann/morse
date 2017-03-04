@@ -37,46 +37,78 @@
           (= (str "/" name))))
 
 
+(defn command-fn
+  "Generate command handler from an update function"
+  [name handler]
+  (fn [update]
+    (if (command? update name)
+      (handler (:message update)))))
+
+
 (defmacro command
   "Generate command handler"
   [name bindings & body]
-  `(fn [update#]
-     (if (command? update# ~name)
-       (let [~bindings (:message update#)] ~@body))))
+  `(command-fn ~name (fn [~bindings] ~@body)))
 
 
-(defn compile-handler
-  "Compile handler from subpath in update"
-  [subpath binding body]
-  `(fn [update#]
-     (if-let [data# (get update# ~subpath)]
-       (let [~binding data#] ~@body))))
+(defn update-fn [path handler-fn]
+  (fn [update]
+    (let [data (get-in update path)]
+      (handler-fn data))))
 
+(defn message-fn [handler-fn]
+  (update-fn [:message] handler-fn))
 
 (defmacro message
-  "Generate command handler"
   [bindings & body]
-  (compile-handler :message bindings body))
+  `(message-fn (fn [~bindings] ~@body)))
 
+
+(defn inline-fn [handler-fn]
+  (update-fn [:inline_query] handler-fn))
 
 (defmacro inline
-  "Generate command handler"
   [bindings & body]
-  (compile-handler :inline_query bindings body))
+  `(inline-fn (fn [~bindings] ~@body)))
+
+
+(defn callback-fn [handler-fn]
+  (update-fn [:callback_query] handler-fn))
 
 (defmacro callback
-  "Generate callback query handler"
   [bindings & body]
-  (compile-handler :callback_query bindings body))
+  `(callback-fn (fn [~bindings] ~@body)))
 
 (comment "Examples of how to use handler definitions"
 
-  (defhandler bot-api
-    (command "start" {user :user} (println "User" user "joined"))
-    (command "chroma" message (handle-text message))
+  ; creates a handler that will react on "/start" command
+  (command-fn "start" (fn [{user :from}] (println "Detecte user:" user)))
 
-    (message message (println "Intercepted message:" message))
+  ; There is a macro for a shorthand usage
+  (command "start" {user :from} (println "Detecte user:" user))
 
-    (inline {user :from q :query} (println "User" user "made inline query" q)))
+  ; Which you can use without desctructuring syntax
+  (command "chroma" message (handle-text message))
 
-  (polling/start token bot-api))
+
+  (defhandler handler
+    (handler-fn "start"
+                (fn [{{id :id :as chat} :chat}]
+                  (println "Bot joined new chat: " chat)))
+
+    (command "start" [{{id :id :as chat} :chat}]
+      (println "Bot joined new chat: " chat)
+      (t/send-text token id "Welcome!"))
+
+    (command "help" {{id :id :as chat} :chat}
+      (println "Help was requested in " chat)
+      (t/send-text token id "Help is on the way"))
+
+    (message {{id :id} :chat :as message}
+      (println "Intercepted message: " message)
+      (t/send-text token id "I don't do a whole lot ... yet.")))
+
+  ; then run in your repl:
+  (polling/start token bot-api)
+
+  )

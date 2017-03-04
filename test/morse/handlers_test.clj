@@ -24,31 +24,45 @@
 
 (deftest commands
 
-  (let [start-handler (h/command "start" msg msg)
-        start-command (command-message "start")]
+  (let [start-handler    (h/command "start" msg msg)
+        start-handler-fn (h/command-fn "start" (fn [msg] msg))
+        start-command    (command-message "start")]
 
-    (is (= (start-handler {:message start-command})
-           start-command))
+    (is (= start-command
+           (start-handler {:message start-command})))
+    (is (= start-command
+           (start-handler-fn {:message start-command})))
 
-    (is (= (start-handler {:message (command-message "help")})
-           nil))
+    (is (= nil
+           (start-handler {:message (command-message "help")})))
+    (is (= nil
+           (start-handler-fn {:message (command-message "help")})))
 
-    (is (= (start-handler {:message (command-message "st")})
-           nil))
+    (is (= nil
+           (start-handler {:message (command-message "st")})))
+    (is (= nil
+           (start-handler-fn {:message (command-message "st")})))
 
-    (is (= (start-handler {:inline (inline-query "Kitten")})
-           nil))))
+    (is (= nil
+           (start-handler {:inline (inline-query "Kitten")})))
+    (is (= nil
+           (start-handler-fn {:inline (inline-query "Kitten")})))))
 
 (deftest inlines
 
-  (let [inline-handler (h/inline msg msg)
-        query (inline-query "facepalm")]
+  (let [inline-handler    (h/inline msg msg)
+        inline-handler-fn (h/inline-fn (fn [msg] msg))
+        query             (inline-query "facepalm")]
 
-    (is (= (inline-handler {:inline_query query})
-           query))
+    (is (= query
+           (inline-handler {:inline_query query})))
+    (is (= query
+           (inline-handler-fn {:inline_query query})))
 
-    (is (= (inline-handler {:message (command-message "help")})
-           nil))))
+    (is (= nil
+           (inline-handler {:message (command-message "help")})))
+    (is (= nil
+           (inline-handler-fn {:message (command-message "help")})))))
 
 (deftest callbacks
   (let [callback-handler (h/callback msg msg)

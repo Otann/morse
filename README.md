@@ -1,4 +1,4 @@
-# morse
+# Morse
 
 [![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=2)](https://circleci.com/gh/Otann/morse)
 
@@ -7,41 +7,110 @@
      alt=":)"
      src="http://otann.github.io/media/projects/morse/signature.gif"/>
 
-`morse` is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
+Morse is a client for [Telegram](https://telegram.org) [Bot API](https://core.telegram.org/bots/api) for the [Clojure](http://clojure.org) programming language.
 
-[![Clojars Project](http://clojars.org/morse/latest-version.svg?&no-cache=5)](https://clojars.org/morse)
+[![Clojars Project](http://clojars.org/morse/latest-version.svg?&no-cache=6)](https://clojars.org/morse)
 
 ## Installation
 
-Add `[morse "0.2.2"]` to the dependency section in your project.clj file.
+Add `[morse "0.2.4"]` to the dependency section in your project.clj file.
 
-## Update Handlers
+There is also a template which you can use to bootstrap your project:
 
-Handler is a function that receives [Update](https://core.telegram.org/bots/api#update)
-object from Telegram as a Clojure map. Morse provides some helpers for you:
+    lein new morse my-project
+    cd my-project
+    export TELEGRAM_TOKEN=...
+    lein run
+
+## Detecting user's actions 
+
+Telegram sends updates about events in chats if form of
+[Update](https://core.telegram.org/bots/api#update) objects.
+
+Inside those there could be commands, inline queries and many more. 
+To help you with these Morse provides you helpers and some macros in
+`morse.handlers` namespace.
+
+If you are familiar with building web-service with Compojure,
+you'll find similarities here:
 
 ```clojure
-(require '[morse.handlers :refer :all])
+(ns user
+  (:require [morse.handlers :as h]
+            [morse.api :as t]))
+            
+(def token "YOUR-BIG-SECRET")          
 
-(defhandler bot-api
-  (command "start" {user :user} (println "User" user "joined"))
-  (command "chroma" message (handle-text message))
+; This will defint bot-api function, which later could be
+; used to start your bot
+(h/defhandler bot-api
+  ; Each bot has to handle /start and /help commands.
+  ; This could be done in form of a function:
+  (command-fn "start" (fn [{{id :id :as chat} :chat}]
+                        (println "Bot joined new chat: " chat)
+                        (t/send-text token id "Welcome!"))) 
 
+  ; You can use short syntax for same purposes
+  ; Destructuring works same way as in function above
+  (command "help" {{id :id :as chat} :chat}
+      (println "Help was requested in " chat)
+      (t/send-text token id "Help is on the way"))
+  
+  ; Handlers will be applied untill there is any of those
+  ; returns non-nil result processing update.
+  
+  ; Note that sending stuff to the user returns non-nil 
+  ; response from Telegram API.     
+  
+  ; So match-all catch-thorough case would look something like this:
   (message message (println "Intercepted message:" message)))
+
 ```
 
-Here's a list of all available handlers:
+### Messages
 
-    (command <command-name> <binding> <body>)
-    (message <binding> <body>)
-    (callback <binding> <body>)
-    (inline <binding> <body>)
+Receives [Message](https://core.telegram.org/bots/api#message) object as
+first parameter in a function or target of binding:
 
-Where binding is same as you use anywhere in Clojure and will be applied to
-[Message](https://core.telegram.org/bots/api#message) object.
+```clojure
+(command-fn "start" (fn [msg] (println "Received command: " msg)))
+; or in a macro form
+(command "start" msg (println "Received command: " msg))
+```
+
+If you wish to process messages that are not prefixed by a command,
+there is also a helper
+
+```clojure
+(message-fn (fn [msg] (println "Received message: " msg)))
+; or in a macro form
+(message "start" msg (println "Received message: " msg))
+```
+
+### Inline requests
+
+There is also a helper to define handlers for [InlineQueries](https://core.telegram.org/bots/api#inlinequery)
+in a similar form:
+
+```clojure
+(inline-fn (fn [inline] (println "Received inline: " inline)))
+; or in a macro form
+(inline inline (println "Received inline: " inline))
+```
+
+### Callbacks
+
+You can provide handlers for [Callbacks](https://core.telegram.org/bots/api#answercallbackquery)
+which are sent from [inline keyboards](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating) 
+
+```clojure
+(callback-fn (fn [data] (println "Received callback: " inline)))
+; or in a macro form
+(callback data (println "Received callback: " inline))
+```
 
 
-### Starting bot
+## Starting your bot
 
 As Telegram documentation says, there are two ways of getting updates
 from the bot: webhook and long-polling.
