@@ -24,7 +24,7 @@ There is also a template which you can use to bootstrap your project:
 
 ## Detecting user's actions 
 
-Telegram sends updates about events in chats if form of
+Telegram sends updates about events in chats in form of
 [Update](https://core.telegram.org/bots/api#update) objects.
 
 Inside those there could be commands, inline queries and many more. 
@@ -41,7 +41,7 @@ you'll find similarities here:
             
 (def token "YOUR-BIG-SECRET")          
 
-; This will defint bot-api function, which later could be
+; This will define bot-api function, which later could be
 ; used to start your bot
 (h/defhandler bot-api
   ; Each bot has to handle /start and /help commands.
@@ -56,13 +56,13 @@ you'll find similarities here:
       (println "Help was requested in " chat)
       (t/send-text token id "Help is on the way"))
   
-  ; Handlers will be applied untill there is any of those
+  ; Handlers will be applied until there are any of those
   ; returns non-nil result processing update.
   
   ; Note that sending stuff to the user returns non-nil 
   ; response from Telegram API.     
   
-  ; So match-all catch-thorough case would look something like this:
+  ; So match-all catch-through case would look something like this:
   (message message (println "Intercepted message:" message)))
 
 ```
@@ -79,7 +79,7 @@ first parameter in a function or target of binding:
 ```
 
 If you wish to process messages that are not prefixed by a command,
-there is also a helper
+there is also a helper:
 
 ```clojure
 (message-fn (fn [msg] (println "Received message: " msg)))
