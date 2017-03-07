@@ -1,7 +1,8 @@
 (ns morse.polling
   "Declares long-polling routines to communicate with Telegram Bot API"
-  (:require [clojure.core.async :refer [chan go go-loop thread
-                                        >!! <! close! alts!!]]
+  (:require [clojure.tools.logging :as log]
+            [clojure.core.async :refer [chan go go-loop thread
+                                        >! <! close! alts!]]
             [morse.api :as api]))
 
 
@@ -19,14 +20,13 @@
    Returns channel with updates from Telegram"
   [running token]
   (let [updates (chan)]
-    (thread
-      (loop [offset 0]
-        (let [data (go (api/get-updates token {:offset offset}))
-              [result _] (alts!! [running data])]
-          (if-not result
-            (close! updates)
-            (do (doseq [upd result] (>!! updates upd))
-                (recur (new-offset result offset)))))))
+    (go-loop [offset 0]
+      (let [resopnse (thread (api/get-updates token {:offset offset}))
+            [data _] (alts! [running resopnse])]
+        (if-not data
+          (close! updates)
+          (do (doseq [upd data] (>! updates upd))
+              (recur (new-offset data offset))))))
     updates))
 
 
@@ -41,7 +41,10 @@
   [updates handler]
   (go-loop []
     (when-let [data (<! updates)]
-      (handler data)
+      (try
+        (handler data)
+        (catch Exception e
+          (log/error e "Unable to handle update" data)))
       (recur))))
 
 

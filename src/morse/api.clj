@@ -1,5 +1,6 @@
 (ns morse.api
-  (:require [clj-http.client :as http]
+  (:require [clojure.tools.logging :as log]
+            [clj-http.client :as http]
             [clojure.string :as string])
   (:import (java.io File)))
 
@@ -14,8 +15,13 @@
         query {:timeout (or timeout 1)
                :offset  (or offset 0)
                :limit   (or limit 100)}
-        resp (http/get url {:as :json :query-params query})]
-    (-> resp :body :result)))
+        resp (http/get url {:as :json
+                            :query-params query
+                            :throw-exceptions false})]
+    (if (-> resp :status (< 300))
+      (-> resp :body :result)
+      (log/error "Telegram returned" (:status resp)
+                 "from /getUpdates:" (:body resp)))))
 
 
 (defn set-webhook
