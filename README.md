@@ -46,13 +46,13 @@ you'll find similarities here:
 (h/defhandler bot-api
   ; Each bot has to handle /start and /help commands.
   ; This could be done in form of a function:
-  (command-fn "start" (fn [{{id :id :as chat} :chat}]
+  (h/command-fn "start" (fn [{{id :id :as chat} :chat}]
                         (println "Bot joined new chat: " chat)
                         (t/send-text token id "Welcome!"))) 
 
   ; You can use short syntax for same purposes
   ; Destructuring works same way as in function above
-  (command "help" {{id :id :as chat} :chat}
+  (h/command "help" {{id :id :as chat} :chat}
       (println "Help was requested in " chat)
       (t/send-text token id "Help is on the way"))
   
@@ -63,7 +63,7 @@ you'll find similarities here:
   ; response from Telegram API.     
   
   ; So match-all catch-through case would look something like this:
-  (message message (println "Intercepted message:" message)))
+  (h/message message (println "Intercepted message:" message)))
 
 ```
 
