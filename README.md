@@ -47,14 +47,14 @@ you'll find similarities here:
   ; Each bot has to handle /start and /help commands.
   ; This could be done in form of a function:
   (h/command-fn "start" (fn [{{id :id :as chat} :chat}]
-                        (println "Bot joined new chat: " chat)
-                        (t/send-text token id "Welcome!"))) 
+                          (println "Bot joined new chat: " chat)
+                          (t/send-text token id "Welcome!"))) 
 
   ; You can use short syntax for same purposes
   ; Destructuring works same way as in function above
   (h/command "help" {{id :id :as chat} :chat}
-      (println "Help was requested in " chat)
-      (t/send-text token id "Help is on the way"))
+    (println "Help was requested in " chat)
+    (t/send-text token id "Help is on the way"))
   
   ; Handlers will be applied until there are any of those
   ; returns non-nil result processing update.
