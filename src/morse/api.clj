@@ -147,7 +147,7 @@
   ([token file_id file_name] 
   (let[file-metadata-url  (str base-url token "/getFile?file_id=" file_id)
        file_path 
-          (-> (client/get file-metadata-url {:as :json :accept :json})
+          (-> (http/get file-metadata-url {:as :json :accept :json})
           :body
           :result
           :file_path)
@@ -156,6 +156,6 @@
     ]
     (println ":" file_path)
     (clojure.java.io/copy
-      (:body (client/get url-to-file {:as :stream}))
+      (:body (http/get url-to-file {:as :stream}))
       (clojure.java.io/as-file file_name)))))
 
