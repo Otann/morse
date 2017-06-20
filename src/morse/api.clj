@@ -140,3 +140,22 @@
                                :as :json
                                :form-params body})]
      (-> resp :body))))
+
+(def telegram-file-api "https://api.telegram.org/file")
+(defn download-file
+  ([token file_id] (download-file token file_id (str file_id ".png")))
+  ([token file_id file_name] 
+  (let[file-metadata-url  (str base-url token "/getFile?file_id=" file_id)
+       file_path 
+          (-> (client/get file-metadata-url {:as :json :accept :json})
+          :body
+          :result
+          :file_path)
+        url-to-file
+          (str telegram-file-api "/bot" token "/" file_path)  
+    ]
+    (println ":" file_path)
+    (clojure.java.io/copy
+      (:body (client/get url-to-file {:as :stream}))
+      (clojure.java.io/as-file file_name)))))
+
