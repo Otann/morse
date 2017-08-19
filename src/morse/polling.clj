@@ -43,8 +43,8 @@
     (when-let [data (<! updates)]
       (try
         (handler data)
-        (catch Exception e
-          (log/error e "Unable to handle update" data)))
+        (catch Throwable t
+          (log/error t "Unable to handle update" data)))
       (recur))))
 
 
