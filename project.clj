@@ -12,10 +12,10 @@
                  [clj-http "2.1.0"]]
 
   :profiles {:uberjar {:aot :all}
-             :dev {:dependencies [[clj-http-fake "1.0.2"]]
-                   :plugins [[com.jakemccrary/lein-test-refresh "0.14.0"]
-                             [com.taoensso/timbre "4.1.4"]
-                             [venantius/ultra "0.4.1"]]}}
+             :test    {:dependencies [[clj-http-fake "1.0.2"]]
+                       :plugins      [[pjstadig/humane-test-output "0.8.2"]
+                                      [com.jakemccrary/lein-test-refresh "0.14.0"]
+                                      [com.taoensso/timbre "4.1.4"]]}}
 
   ;; Artifact deployment info
   :scm {:name "git"
@@ -30,8 +30,7 @@
                   ["vcs" "tag"]
                   ["deploy" "clojars"]
                   ["change" "version" "leiningen.release/bump-version"]
-                  ["vcs" "commit"]
-                  ["echo" "-e" "Now run:\\n\\n    lein vcs push\\n"]]
+                  ["vcs" "commit"]]
 
   :pom-addition [:developers [:developer
                               [:name "Anton Chebotaev"]
