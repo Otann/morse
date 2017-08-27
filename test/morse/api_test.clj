@@ -8,6 +8,7 @@
 (def chat-id 239)
 (def message-id 1)
 (def inline-query-id 1337)
+(def callback-query-id 1338)
 
 (deftest send-text-request
          (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
@@ -98,3 +99,13 @@
               (is (u/has-subset? {:inline_query_id inline-query-id} [body]))
               (is (u/has-subset? {:results [{:type "gif" :id 31337 :gif_url "gif.gif"}]} [body]))
               (is (u/has-subset? {:is_personal true} [body]))))
+
+(deftest answer-callback-request
+         (let [req (-> (api/answer-callback token callback-query-id "text" true)
+                       (u/capture-request))
+               body (json/decode (slurp (:body req)) true)]
+
+              (is (= :post (:request-method req)))
+              (is (u/has-subset? {:callback_query_id callback-query-id} [body]))
+              (is (u/has-subset? {:text "text"} [body]))
+              (is (u/has-subset? {:show_alert true} [body]))))
