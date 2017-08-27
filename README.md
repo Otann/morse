@@ -1,6 +1,6 @@
 # Morse
 
-[![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=2)](https://circleci.com/gh/Otann/morse)
+[![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=3)](https://circleci.com/gh/Otann/morse)
 
 <img width="30%"
      align="right" padding="5px"
@@ -13,7 +13,7 @@ Morse is a client for [Telegram](https://telegram.org) [Bot API](https://core.te
 
 ## Installation
 
-Add `[morse "0.2.4"]` to the dependency section in your project.clj file.
+Add `[morse "0.2.5"]` to the dependency section in your project.clj file.
 
 There is also a template which you can use to bootstrap your project:
 
