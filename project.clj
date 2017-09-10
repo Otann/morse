@@ -1,4 +1,4 @@
-(defproject morse "0.2.7-SNAPSHOT"
+(defproject morse "0.2.7"
   :description "Telegram Bot API"
 
   :url "https://github.com/otann/morse/"
