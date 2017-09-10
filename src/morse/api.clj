@@ -143,8 +143,8 @@
 
 (defn answer-callback
  "Sends an answer to an callback query"
- ([token callback-query-id] (answer-callback token "" false))
- ([token callback-query-id text] (answer-callback token text false))
+ ([token callback-query-id] (answer-callback token callback-query-id "" false))
+ ([token callback-query-id text] (answer-callback token callback-query-id text false))
  ([token callback-query-id text show-alert]
    (let [url (str base-url token "/answerCallbackQuery")
          body {:callback_query_id callback-query-id :text text :show_alert show-alert}
