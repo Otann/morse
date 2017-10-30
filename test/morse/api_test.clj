@@ -48,6 +48,17 @@
               ; check that a nested option has encoded
               (is (u/has-subset? {:reply_markup {:keyboard [[{:text "button"}]]}} [body]))))
 
+(deftest delete-text-request
+          (let [req (-> (api/delete-text token chat-id message-id)
+                        (u/capture-request))
+                body (json/decode (slurp (:body req)) true)]
+          ; check that it is now post request
+          (is (= :post (:request-method req)))
+
+          ; check that default params are presented
+          (is (u/has-subset? {:chat_id chat-id
+                              :message_id message-id} [body]))))
+
 (deftest send-photo-request
   (let [data (byte-array (map byte "content"))
         req  (-> (api/send-photo token chat-id data)

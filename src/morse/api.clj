@@ -61,8 +61,10 @@
   [token chat-id message-id]
   (let [base-url "https://api.telegram.org/bot"
         url (str base-url token "/deleteMessage")
-        query (into {:chat_id chat-id :message_id message-id} {})
-        resp (http/post url {:content-type :json :as :json :form-params query})]
+        query {:chat_id chat-id :message_id message-id}
+        resp (http/post url {:content-type :json
+                             :as :json
+                             :form-params query})]
     (-> resp :body)))
 
 (defn send-file [token chat-id options file method field filename]
