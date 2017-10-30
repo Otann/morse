@@ -59,8 +59,7 @@
 (defn delete-text
   "Removing a message from the chat"
   [token chat-id message-id]
-  (let [base-url "https://api.telegram.org/bot"
-        url (str base-url token "/deleteMessage")
+  (let [url (str base-url token "/deleteMessage")
         query {:chat_id chat-id :message_id message-id}
         resp (http/post url {:content-type :json
                              :as :json
