@@ -1,8 +1,9 @@
 (ns morse.polling
   "Declares long-polling routines to communicate with Telegram Bot API"
   (:require [clojure.tools.logging :as log]
-            [clojure.core.async :refer [chan go go-loop thread
-                                        >! <! close! alts!]]
+            [clojure.core.async :as a
+             :refer [chan go go-loop thread
+                     >! <! close! alts!]]
             [morse.api :as api]))
 
 
@@ -18,13 +19,21 @@
   "Passed channel should be always empty.
    Close it to stop long-polling.
    Returns channel with updates from Telegram"
-  [running token]
-  (let [updates (chan)]
+  [running token opts]
+  (let [updates (a/chan)
+        timeout (or (:timeout opts) 1000)]
     (go-loop [offset 0]
-      (let [resopnse (thread (api/get-updates token {:offset offset}))
-            [data _] (alts! [running resopnse])]
-        (if-not data
+      (let [resopnse (a/thread (api/get-updates token (merge opts {:offset offset})))
+            [data _] (a/alts! [running resopnse])]
+        (case data
+          nil
           (close! updates)
+
+          ::api/error
+          (do (log/warn "Got error from Telegram API, retrying in" timeout "ms")
+              (<! (a/timeout timeout))
+              (recur offset))
+
           (do (doseq [upd data] (>! updates upd))
               (recur (new-offset data offset))))))
     updates))
@@ -49,12 +58,15 @@
 
 
 (defn start
-  "Starts long-polling process"
-  [token handler]
-  (let [running (chan)
-        updates (create-producer running token)]
-    (create-consumer updates handler)
-    running))
+  "Starts long-polling process.
+  Handler is supposed to process immediately, as it will
+  be called in a blocking manner."
+  ([token handler] (start token handler {}))
+  ([token handler opts]
+   (let [running (chan)
+         updates (create-producer running token opts)]
+     (create-consumer updates handler)
+     running)))
 
 
 (defn stop

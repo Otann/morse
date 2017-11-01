@@ -264,6 +264,6 @@ Sends an answer to an callback query sent from inline keyboards.
 
 ## License
 
-Copyright © 2016 Anton Chebotaev
+Copyright © 2017 Anton Chebotaev
 
 Distributed under the Eclipse Public License either version 1.0.

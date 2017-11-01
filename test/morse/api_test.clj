@@ -11,53 +11,53 @@
 (def callback-query-id 1338)
 
 (deftest send-text-request
-         (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
-               req (-> (api/send-text token chat-id options "message")
-                       (u/capture-request))
-               body (json/decode (slurp (:body req)) true)]
+  (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
+        req (-> (api/send-text token chat-id options "message")
+                (u/capture-request))
+        body (json/decode (slurp (:body req)) true)]
 
-              ; check that it is now post request
-              (is (= :post (:request-method req)))
+    ; check that it is now post request
+    (is (= :post (:request-method req)))
 
-              ; check that default params are presented
-              (is (u/has-subset? {:chat_id 239 :text "message"} [body]))
+    ; check that default params are presented
+    (is (u/has-subset? {:chat_id 239 :text "message"} [body]))
 
-              ; check that a flat option has encoded
-              (is (u/has-subset? {:parse_mode "Markdown"} [body]))
+    ; check that a flat option has encoded
+    (is (u/has-subset? {:parse_mode "Markdown"} [body]))
 
-              ; check that a nested option has encoded
-              (is (u/has-subset? {:reply_markup {:keyboard [[{:text "button"}]]}} [body]))))
+    ; check that a nested option has encoded
+    (is (u/has-subset? {:reply_markup {:keyboard [[{:text "button"}]]}} [body]))))
 
 (deftest edit-text-request
-         (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
-               req (-> (api/edit-text token chat-id message-id options "edited message")
-                       (u/capture-request))
-               body (json/decode (slurp (:body req)) true)]
+  (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
+        req (-> (api/edit-text token chat-id message-id options "edited message")
+                (u/capture-request))
+        body (json/decode (slurp (:body req)) true)]
 
-              ; check that it is now post request
-              (is (= :post (:request-method req)))
+    ; check that it is now post request
+    (is (= :post (:request-method req)))
 
-              ; check that default params are presented
-              (is (u/has-subset? {:chat_id chat-id
-                                  :message_id message-id
-                                  :text "edited message"} [body]))
+    ; check that default params are presented
+    (is (u/has-subset? {:chat_id chat-id
+                        :message_id message-id
+                        :text "edited message"} [body]))
 
-              ; check that a flat option has encoded
-              (is (u/has-subset? {:parse_mode "Markdown"} [body]))
+    ; check that a flat option has encoded
+    (is (u/has-subset? {:parse_mode "Markdown"} [body]))
 
-              ; check that a nested option has encoded
-              (is (u/has-subset? {:reply_markup {:keyboard [[{:text "button"}]]}} [body]))))
+    ; check that a nested option has encoded
+    (is (u/has-subset? {:reply_markup {:keyboard [[{:text "button"}]]}} [body]))))
 
 (deftest delete-text-request
-          (let [req (-> (api/delete-text token chat-id message-id)
-                        (u/capture-request))
-                body (json/decode (slurp (:body req)) true)]
-          ; check that it is now post request
-          (is (= :post (:request-method req)))
+  (let [req (-> (api/delete-text token chat-id message-id)
+                (u/capture-request))
+        body (json/decode (slurp (:body req)) true)]
+    ; check that it is now post request
+    (is (= :post (:request-method req)))
 
-          ; check that default params are presented
-          (is (u/has-subset? {:chat_id chat-id
-                              :message_id message-id} [body]))))
+    ; check that default params are presented
+    (is (u/has-subset? {:chat_id chat-id
+                        :message_id message-id} [body]))))
 
 (deftest send-photo-request
   (let [data (byte-array (map byte "content"))
@@ -102,21 +102,23 @@
                (api/get-updates token {})))))))
 
 (deftest answer-inline-request
-         (let [req (-> (api/answer-inline token inline-query-id {:is_personal true} [{:type "gif" :id 31337 :gif_url "gif.gif"}])
-                       (u/capture-request))
-               body (json/decode (slurp (:body req)) true)]
+  (let [req (-> (api/answer-inline token inline-query-id
+                  {:is_personal true}
+                  [{:type "gif" :id 31337 :gif_url "gif.gif"}])
+                (u/capture-request))
+        body (json/decode (slurp (:body req)) true)]
 
-              (is (= :post (:request-method req)))
-              (is (u/has-subset? {:inline_query_id inline-query-id} [body]))
-              (is (u/has-subset? {:results [{:type "gif" :id 31337 :gif_url "gif.gif"}]} [body]))
-              (is (u/has-subset? {:is_personal true} [body]))))
+    (is (= :post (:request-method req)))
+    (is (u/has-subset? {:inline_query_id inline-query-id} [body]))
+    (is (u/has-subset? {:results [{:type "gif" :id 31337 :gif_url "gif.gif"}]} [body]))
+    (is (u/has-subset? {:is_personal true} [body]))))
 
 (deftest answer-callback-request
-         (let [req (-> (api/answer-callback token callback-query-id "text" true)
-                       (u/capture-request))
-               body (json/decode (slurp (:body req)) true)]
+  (let [req (-> (api/answer-callback token callback-query-id "text" true)
+                (u/capture-request))
+        body (json/decode (slurp (:body req)) true)]
 
-              (is (= :post (:request-method req)))
-              (is (u/has-subset? {:callback_query_id callback-query-id} [body]))
-              (is (u/has-subset? {:text "text"} [body]))
-              (is (u/has-subset? {:show_alert true} [body]))))
+    (is (= :post (:request-method req)))
+    (is (u/has-subset? {:callback_query_id callback-query-id} [body]))
+    (is (u/has-subset? {:text "text"} [body]))
+    (is (u/has-subset? {:show_alert true} [body]))))
