@@ -56,6 +56,16 @@
           ]
          (-> resp :body))))
 
+(defn delete-text
+  "Removing a message from the chat"
+  [token chat-id message-id]
+  (let [url (str base-url token "/deleteMessage")
+        query {:chat_id chat-id :message_id message-id}
+        resp (http/post url {:content-type :json
+                             :as :json
+                             :form-params query})]
+    (-> resp :body)))
+
 (defn send-file [token chat-id options file method field filename]
   "Helper function to send various kinds of files as multipart-encoded"
   (let [url (str base-url token method)
