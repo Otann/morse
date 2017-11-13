@@ -1,8 +1,30 @@
 (ns morse.api
-  (:require [clojure.tools.logging :as log]
+  (:require [clojure.spec.alpha :as s]
+            [clojure.tools.logging :as log]
             [clj-http.client :as http]
             [clojure.string :as string])
   (:import (java.io File)))
+
+(s/def ::token
+  (s/and? string?
+          (partial re-matches #"^\d{9}:.{35}")))
+
+(s/def ::text string?)
+(s/def ::chat-id int?)
+(s/def ::parse-mode #{"Markdown" "HTML"})
+(s/def ::disable-webpage-preview boolean?)
+
+(s/def ::getMe nil?)
+(s/def ::sendMessage
+  (s/keys :req [::chat-id ::text]
+          :opt [::parse-mode ::disable-webpage-preview]))
+
+(s/def ::method
+  #{(s/tuple "getMe" ::getMe)
+    (s/tuple "sendMessage" ::sendMessage)})
+
+(s/def ::request
+  (s/keys :req [::token ::method]))
 
 
 (def base-url "https://api.telegram.org/bot")
