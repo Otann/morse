@@ -23,11 +23,12 @@
   (let [updates (a/chan)
         timeout (or (:timeout opts) 1000)]
     (go-loop [offset 0]
-      (let [resopnse (a/thread (api/get-updates token (merge opts {:offset offset})))
-            [data _] (a/alts! [running resopnse])]
+      (let [response (a/thread (api/get-updates token (merge opts {:offset offset})))
+            [data _] (a/alts! [running response])]
         (case data
           nil
-          (close! updates)
+          (do (close! running)
+              (close! updates))
 
           ::api/error
           (do (log/warn "Got error from Telegram API, retrying in" timeout "ms")
@@ -41,7 +42,7 @@
 
 (defn create-consumer
   "Creates consumer from given handler function
-   and channel wuth updates.
+   and channel with updates.
 
    Start infinite loop inside go-routine
    that will pull messages from channel.
