@@ -6,7 +6,7 @@
   (:import (java.io File)))
 
 (s/def ::token
-  (s/and? string?
+  (s/and string?
           (partial re-matches #"^\d{9}:.{35}")))
 
 (s/def ::text string?)
