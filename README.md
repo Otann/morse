@@ -261,6 +261,34 @@ Sends an answer to an callback query sent from inline keyboards.
                      show-alert)
 ```
 
+
+## Q-Code
+
+Q-Codes in Morse are shorthands for common patterns. `morse.qcodes/direct-reply` & `morse.qcodes/req-morse` are the Q-Codes already available. Here is an example usage of both.
+
+```clojure
+(ns look.anotherbadlynamedns
+  (:require [morse.qcodes :as q]
+            [morse.handlers :as h]
+            [somehttpserver :as http]))
+
+(def token "") 
+(def webhook "")
+
+(defn just-say-hi [name]
+  (str "Hi " name "!"))
+  
+(defhandler thisismyapp
+  (message {:keys [text]} (just-say-hi text)))
+  
+(def therealhandler (q/direct-reply token thisismyapp))
+
+(morse.api/set-webhook token (str webhook "/" token)) ;; make webhooks safe by using the token as path
+(def myserver (http/start-server (q/req->morse token therealhandler) {:port 80}))
+;; req->morse will convert json to edn and make sure the proper path (token) is used.
+```
+
+
 ## License
 
 Copyright © 2017 Anton Chebotaev
