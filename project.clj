@@ -1,4 +1,3 @@
-
 (defproject morse "0.3.2-SNAPSHOT"
   :description "Telegram Bot API"
 
