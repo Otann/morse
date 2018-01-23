@@ -9,10 +9,10 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [clj-stacktrace "0.2.8"]
                  [cheshire "5.5.0"]
-                 [clj-http "2.1.0"]]
+                 [clj-http "3.7.0"]]
 
   :profiles {:uberjar {:aot :all}
-             :test    {:dependencies [[clj-http-fake "1.0.2"]]
+             :test    {:dependencies [[clj-http-fake "1.0.3"]]
                        :plugins      [[pjstadig/humane-test-output "0.8.2"]
                                       [com.jakemccrary/lein-test-refresh "0.14.0"]
                                       [com.taoensso/timbre "4.1.4"]]}}

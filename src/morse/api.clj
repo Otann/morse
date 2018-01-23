@@ -10,22 +10,17 @@
 
 (defn get-updates
   "Receive updates from Bot via long-polling endpoint"
-  [token {:keys [limit offset timeout]}]
-  (let [url      (str base-url token "/getUpdates")
-        query    {:timeout (or timeout 1)
-                  :offset  (or offset 0)
-                  :limit   (or limit 100)}
-        response (http/get url {:as               :json
-                                :query-params     query
-                                :throw-exceptions false})
-        {:keys [status body]} response]
-    (if (< status 300)
-      (:result body)
-
-      (do
-        (log/error "Telegram returned" (:status response)
-                   "from /getUpdates:" (:body response))
-        ::error))))
+  ([token resp-handler err-handler {:keys [limit offset timeout]}]
+   (let [url      (str base-url token "/getUpdates")
+         query    {:timeout (or timeout 1)
+                   :offset  (or offset 0)
+                   :limit   (or limit 100)}
+         request {:as               :json
+                  :query-params     query
+                  :async?           true}]
+     (http/get url request #(resp-handler (-> %
+                                              :body
+                                              :result)) err-handler))))
 
 
 (defn set-webhook

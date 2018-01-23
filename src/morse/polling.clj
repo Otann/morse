@@ -3,7 +3,7 @@
   (:require [clojure.tools.logging :as log]
             [clojure.core.async :as a
              :refer [chan go go-loop thread
-                     >! <! close! alts!]]
+                     >!! >! <! close! alts!]]
             [morse.api :as api]))
 
 
@@ -21,22 +21,34 @@
    Returns channel with updates from Telegram"
   [running token opts]
   (let [updates (a/chan)
+        updates-caller (or (:get-updates-fn opts) api/get-updates)
         timeout (or (:timeout opts) 1000)]
     (go-loop [offset 0]
-      (let [response (a/thread (api/get-updates token (merge opts {:offset offset})))
-            [data _] (a/alts! [running response])]
+      (let [response (a/chan)
+            ;; in clj-http async handlers the context is
+            ;; outside of go-loop - that's why using >!! here
+            _ (updates-caller
+               token
+               #(>!! response %)
+               (fn [exception]
+                 (log/errorf
+                  "Got exception while calling Telegram API: %s"
+                  (.getMessage exception))
+                 (close! running))
+               (merge opts {:offset offset}))
+            wait-timeout (a/timeout (or (:wait-timeout opts) (* timeout 5)))
+            [data _] (a/alts! [running response wait-timeout])]
         (case data
-          nil
-          (do (close! running)
-              (close! updates))
+          nil (do
+                (log/info "Stopping Telegram polling...")
+                (close! wait-timeout)
+                (close! running)
+                (close! updates))
 
-          ::api/error
-          (do (log/warn "Got error from Telegram API, retrying in" timeout "ms")
-              (<! (a/timeout timeout))
-              (recur offset))
-
-          (do (doseq [upd data] (>! updates upd))
-              (recur (new-offset data offset))))))
+          (do
+            (close! wait-timeout)
+            (doseq [upd data] (>! updates upd))
+            (recur (new-offset data offset))))))
     updates))
 
 
