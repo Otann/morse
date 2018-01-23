@@ -81,25 +81,24 @@
 
 (deftest get-updates-request
   (is (= #{"timeout=1" "offset=0" "limit=100"}
-         (-> (api/get-updates token {})
+         (-> (api/get-updates token identity identity {})
              (u/capture-request)
              (u/extract-query-set))))
 
   (is (= #{"timeout=1" "offset=0" "limit=200"}
-         (-> (api/get-updates token {:limit 200})
+         (-> (api/get-updates token identity identity {:limit 200})
              (u/capture-request)
              (u/extract-query-set))))
 
   (is (= #{"timeout=1" "offset=31337" "limit=100"}
-         (-> (api/get-updates token {:offset 31337})
+         (-> (api/get-updates token identity identity {:offset 31337})
              (u/capture-request)
              (u/extract-query-set))))
 
   (testing "method returns part of the reponse body"
     (let [updates {:foo "bar"}]
       (u/with-faked-updates updates
-        (is (= updates
-               (api/get-updates token {})))))))
+        (is (= updates (api/get-updates token identity identity {})))))))
 
 (deftest answer-inline-request
   (let [req (-> (api/answer-inline token inline-query-id
