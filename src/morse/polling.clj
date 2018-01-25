@@ -4,7 +4,8 @@
             [clojure.core.async :as a
              :refer [chan go go-loop thread
                      >!! >! <! close! alts!]]
-            [morse.api :as api]))
+            [morse.api :as api])
+  (:import (clojure.core.async.impl.protocols ReadPort)))
 
 
 (defn new-offset
@@ -78,7 +79,9 @@
   ([token handler opts]
    (let [running (chan)
          updates (create-producer running token opts)]
-     (create-consumer updates handler)
+     (if (satisfies? ReadPort handler)
+       (a/pipe updates handler)
+       (create-consumer updates handler))
      running)))
 
 
