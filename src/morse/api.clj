@@ -1,26 +1,36 @@
 (ns morse.api
   (:require [clojure.tools.logging :as log]
             [clj-http.client :as http]
-            [clojure.string :as string])
+            [clojure.string :as string]
+            [cheshire.core :as json]
+            [clojure.core.async :as a])
   (:import (java.io File)))
 
 
 (def base-url "https://api.telegram.org/bot")
 
 
-(defn get-updates
+(defn get-updates-async
   "Receive updates from Bot via long-polling endpoint"
-  ([token resp-handler err-handler {:keys [limit offset timeout]}]
-   (let [url      (str base-url token "/getUpdates")
-         query    {:timeout (or timeout 1)
-                   :offset  (or offset 0)
-                   :limit   (or limit 100)}
-         request {:as               :json
-                  :query-params     query
-                  :async?           true}]
-     (http/get url request #(resp-handler (-> %
-                                              :body
-                                              :result)) err-handler))))
+  ([token {:keys [limit offset timeout]}]
+   (let [url         (str base-url token "/getUpdates")
+         query       {:timeout (or timeout 1)
+                      :offset  (or offset 0)
+                      :limit   (or limit 100)}
+         request     {:query-params query
+                      :async?       true}
+         result      (a/chan)
+         on-success  (fn [resp]
+                       (if-let [data (-> resp :body (json/parse-string true) :result)]
+                         (a/put! result data)
+                         (a/put! result ::error))
+                       (a/close! result))
+         on-failure  (fn [err]
+                       (log/debug err "Exception while getting updates from Telegram API")
+                       (a/put! result ::error)
+                       (a/close! result))]
+     (http/get url request on-success on-failure)
+     result)))
 
 
 (defn set-webhook

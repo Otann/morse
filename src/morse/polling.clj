@@ -21,34 +21,34 @@
    Returns channel with updates from Telegram"
   [running token opts]
   (let [updates (a/chan)
-        updates-caller (or (:get-updates-fn opts) api/get-updates)
-        timeout (or (:timeout opts) 1000)]
+        ;; timeout for Telegram API in seconds
+        timeout (or (:timeout opts) 1)]
     (go-loop [offset 0]
-      (let [response (a/chan)
-            ;; in clj-http async handlers the context is
-            ;; outside of go-loop - that's why using >!! here
-            _ (updates-caller
-               token
-               #(>!! response %)
-               (fn [exception]
-                 (log/errorf
-                  "Got exception while calling Telegram API: %s"
-                  (.getMessage exception))
-                 (close! running))
-               (merge opts {:offset offset}))
-            wait-timeout (a/timeout (or (:wait-timeout opts) (* timeout 5)))
+      (let [;; fix for JDK bug https://bugs.openjdk.java.net/browse/JDK-8075484
+            wait-timeout (a/go (a/<! (a/timeout (* timeout 2)))
+                               ::wait-timeout)
+            response     (api/get-updates-async token opts)
             [data _] (a/alts! [running response wait-timeout])]
         (case data
-          nil (do
-                (log/info "Stopping Telegram polling...")
-                (close! wait-timeout)
-                (close! running)
-                (close! updates))
+          ;; running got closed by the user
+          nil
+          (do (log/info "Stopping Telegram polling...")
+              (close! wait-timeout)
+              (close! updates))
 
-          (do
-            (close! wait-timeout)
-            (doseq [upd data] (>! updates upd))
-            (recur (new-offset data offset))))))
+          ::wait-timeout
+          (do (log/error "HTTP request timed out, stopping polling")
+              (close! running)
+              (close! updates))
+
+          ::api/error
+          (do (log/warn "Got error from Telegram API, stopping polling")
+              (close! running)
+              (close! updates))
+
+          (do (close! wait-timeout)
+              (doseq [upd data] (>! updates upd))
+              (recur (new-offset data offset))))))
     updates))
 
 
