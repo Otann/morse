@@ -1,6 +1,8 @@
 # Morse
 
-[![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=5)](https://circleci.com/gh/Otann/morse) [![Clojars](https://img.shields.io/clojars/v/morse.svg)](https://clojars.org/morse)
+[![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=5)](https://circleci.com/gh/Otann/morse)
+[![Clojars](https://img.shields.io/clojars/v/morse.svg)](https://clojars.org/morse)
+[![codecov](https://codecov.io/gh/Otann/morse/branch/master/graph/badge.svg)](https://codecov.io/gh/Otann/morse)
 
 <img width="30%"
      align="right" padding="5px"
