@@ -11,6 +11,8 @@
                  [cheshire "5.5.0"]
                  [clj-http "3.7.0"]]
 
+  :plugins [[lein-cloverage "1.0.10"]]
+
   :profiles {:uberjar {:aot :all}
              :test    {:dependencies [[clj-http-fake "1.0.3"]]
                        :plugins      [[pjstadig/humane-test-output "0.8.2"]
