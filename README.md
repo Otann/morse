@@ -14,7 +14,7 @@ Morse is a client for [Telegram](https://telegram.org) [Bot API](https://core.te
 
 ## Installation
 
-Add `[morse "0.3.3"]` to the dependency section in your project.clj file.
+Add `[morse "0.3.4"]` to the dependency section in your project.clj file.
 
 There is also a template which you can use to bootstrap your project:
 
