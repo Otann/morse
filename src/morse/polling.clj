@@ -25,7 +25,7 @@
         timeout (or (:timeout opts) 1)]
     (go-loop [offset 0]
       (let [;; fix for JDK bug https://bugs.openjdk.java.net/browse/JDK-8075484
-            wait-timeout (a/go (a/<! (a/timeout (* 1000 timeout 2)))
+            wait-timeout (a/go (a/<! (a/timeout (* 1000 timeout 3)))
                                ::wait-timeout)
             response     (api/get-updates-async token (assoc opts :offset offset))
             [data _] (a/alts! [running response wait-timeout])]
