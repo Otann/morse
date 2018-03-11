@@ -160,6 +160,18 @@ Then if you want to stop created background processes, call stop on returned cha
 (p/stop channel)
 ```
 
+If you want to get updates directly as a channel, instead of passing a function to process them,
+simply pass a channel instead of handler and pull updates from there:
+
+```clojure
+(require '[morse.polling :as p]
+         '[clojure.core.async :as a])
+
+(def updates (a/chan)
+(def channel (p/start token updates))
+(a/go-loop []
+  (println "received an update:" (a/<! updates)))
+```
 
 ## Sending messages
 
