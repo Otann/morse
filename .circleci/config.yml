@@ -25,6 +25,6 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "project.clj" }}
 
-      - run: lein with-profile test cloverage --codecov
+      - run: lein with-profile dev cloverage --codecov
 
       - run: bash <(curl -s https://codecov.io/bash)
