@@ -76,13 +76,13 @@
   "Starts long-polling process.
   Handler is supposed to process immediately, as it will
   be called in a blocking manner."
-  ([token handler] (start token handler {}))
-  ([token handler opts]
+  ([token handler-or-chan] (start token handler-or-chan {}))
+  ([token handler-or-chan opts]
    (let [running (chan)
          updates (create-producer running token opts)]
-     (if (satisfies? ReadPort handler)
-       (a/pipe updates handler)
-       (create-consumer updates handler))
+     (if (instance? ReadPort handler-or-chan)
+       (a/pipe updates handler-or-chan)
+       (create-consumer updates handler-or-chan))
      running)))
 
 

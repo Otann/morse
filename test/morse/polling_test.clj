@@ -18,11 +18,19 @@
     (a/put! channel upd)))
 
 (deftest handler-receives-update
-  (testing "passing the response from updates function correctly"
+  (testing "passing the response to handler works"
     (u/with-faked-updates sample-update
       (let [result  (chan)
             handler (handler-for result)
             running (poll/start "token" handler {})]
+        (is (= (first sample-update)
+               (<!!? result 1000)))
+        (poll/stop running))))
+
+  (testing "passing the response to channel works"
+    (u/with-faked-updates sample-update
+      (let [result  (chan)
+            running (poll/start "token" result {})]
         (is (= (first sample-update)
                (<!!? result 1000)))
         (poll/stop running))))
@@ -33,5 +41,5 @@
         (is (nil? (<!!? running 1000))))))
 
   (testing "stopping polling process when reaching global timeout"
-    (let [running (poll/start "token" identity {:timeout 0.001})]
+    (let [running (poll/start "token" identity {:timeout 0.01})]
       (is (nil? (<!!? running 1000))))))
