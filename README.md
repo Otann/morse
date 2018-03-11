@@ -1,6 +1,8 @@
 # Morse
 
-[![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=5)](https://circleci.com/gh/Otann/morse) [![Clojars](https://img.shields.io/clojars/v/morse.svg)](https://clojars.org/morse)
+[![Circle CI](https://circleci.com/gh/Otann/morse.svg?style=shield&no-cache=5)](https://circleci.com/gh/Otann/morse)
+[![Clojars](https://img.shields.io/clojars/v/morse.svg)](https://clojars.org/morse)
+[![codecov](https://codecov.io/gh/Otann/morse/branch/master/graph/badge.svg)](https://codecov.io/gh/Otann/morse)
 
 <img width="30%"
      align="right" padding="5px"
@@ -12,7 +14,7 @@ Morse is a client for [Telegram](https://telegram.org) [Bot API](https://core.te
 
 ## Installation
 
-Add `[morse "0.3.2"]` to the dependency section in your project.clj file.
+Add `[morse "0.3.6"]` to the dependency section in your project.clj file.
 
 There is also a template which you can use to bootstrap your project:
 

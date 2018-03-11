@@ -26,9 +26,10 @@
         timeout (or (:timeout opts) 1)]
     (go-loop [offset 0]
       (let [;; fix for JDK bug https://bugs.openjdk.java.net/browse/JDK-8075484
-            wait-timeout (a/go (a/<! (a/timeout (* timeout 2)))
+            ;; introduce additional timeout 10 times more that telegram's one
+            wait-timeout (a/go (a/<! (a/timeout (* 1000 timeout 10)))
                                ::wait-timeout)
-            response     (api/get-updates-async token opts)
+            response     (api/get-updates-async token (assoc opts :offset offset))
             [data _] (a/alts! [running response wait-timeout])]
         (case data
           ;; running got closed by the user

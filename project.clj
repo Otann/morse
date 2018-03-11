@@ -1,4 +1,4 @@
-(defproject morse "0.3.3-SNAPSHOT"
+(defproject morse "0.3.7-SNAPSHOT"
   :description "Telegram Bot API"
 
   :url "https://github.com/otann/morse/"
@@ -10,6 +10,8 @@
                  [clj-stacktrace "0.2.8"]
                  [cheshire "5.5.0"]
                  [clj-http "3.7.0"]]
+
+  :plugins [[lein-cloverage "1.0.10"]]
 
   :profiles {:uberjar {:aot :all}
              :test    {:dependencies [[clj-http-fake "1.0.3"]]
