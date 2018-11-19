@@ -85,7 +85,7 @@ there is also a helper:
 ```clojure
 (message-fn (fn [msg] (println "Received message: " msg)))
 ; or in a macro form
-(message "start" msg (println "Received message: " msg))
+(message msg (println "Received message: " msg))
 ```
 
 ### Inline requests
