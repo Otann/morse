@@ -41,6 +41,28 @@
     (http/get url {:as :json :query-params query})))
 
 
+(defn get-file
+  "Gets url of the file"
+  [token file-id]
+  (let [url  (str base-url token "/getFile")
+        body ({:file_id file-id})
+        resp (http/post url {:content-type :json
+                             :as           :json
+                             :form-params  body})]
+    (-> resp :body)))
+  
+(defn get-user-profile-photos
+  "Gets user profile photos object"
+  ([token user-id] (get-user-profile-photos token user-id {}))
+  ([token user-id options]
+   (let [url  (str base-url token "/getUserProfilePhotos")
+         body (into {:user_id user-id} options)
+         resp (http/post url {:content-type :json
+                              :as           :json
+                              :form-params  body})]
+      (-> resp :body))))
+
+
 (defn send-text
   "Sends message to the chat"
   ([token chat-id text] (send-text token chat-id {} text))
@@ -61,8 +83,8 @@
          query (into {:chat_id chat-id :text text :message_id message-id} options)
          resp  (http/post url {:content-type :json
                                :as           :json
-                               :form-params  query})
-         ]
+                               :form-params  query})]
+         
      (-> resp :body))))
 
 (defn delete-text
