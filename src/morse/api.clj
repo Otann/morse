@@ -45,7 +45,7 @@
   "Gets url of the file"
   [token file-id]
   (let [url  (str base-url token "/getFile")
-        body ({:file_id file-id})
+        body {:file_id file-id}
         resp (http/post url {:content-type :json
                              :as           :json
                              :form-params  body})]
