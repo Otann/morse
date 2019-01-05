@@ -1,4 +1,4 @@
-(defproject morse "0.4.0"
+(defproject morse "0.4.1"
   :description "Telegram Bot API"
 
   :url "https://github.com/otann/morse/"
@@ -21,10 +21,10 @@
 
   ;; Artifact deployment info
   :scm {:name "git"
-        :url "https://github.com/otann/morse"}
+        :url  "https://github.com/otann/morse"}
 
   :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+            :url  "http://www.eclipse.org/legal/epl-v10.html"}
 
   :release-tasks [["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]

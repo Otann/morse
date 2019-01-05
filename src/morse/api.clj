@@ -13,22 +13,22 @@
 (defn get-updates-async
   "Receive updates from Bot via long-polling endpoint"
   ([token {:keys [limit offset timeout]}]
-   (let [url         (str base-url token "/getUpdates")
-         query       {:timeout (or timeout 1)
-                      :offset  (or offset 0)
-                      :limit   (or limit 100)}
-         request     {:query-params query
-                      :async?       true}
-         result      (a/chan)
-         on-success  (fn [resp]
-                       (if-let [data (-> resp :body (json/parse-string true) :result)]
-                         (a/put! result data)
-                         (a/put! result ::error))
-                       (a/close! result))
-         on-failure  (fn [err]
-                       (log/debug err "Exception while getting updates from Telegram API")
-                       (a/put! result ::error)
-                       (a/close! result))]
+   (let [url        (str base-url token "/getUpdates")
+         query      {:timeout (or timeout 1)
+                     :offset  (or offset 0)
+                     :limit   (or limit 100)}
+         request    {:query-params query
+                     :async?       true}
+         result     (a/chan)
+         on-success (fn [resp]
+                      (if-let [data (-> resp :body (json/parse-string true) :result)]
+                        (a/put! result data)
+                        (a/put! result ::error))
+                      (a/close! result))
+         on-failure (fn [err]
+                      (log/debug err "Exception while getting updates from Telegram API")
+                      (a/put! result ::error)
+                      (a/close! result))]
      (http/get url request on-success on-failure)
      result)))
 
@@ -50,7 +50,8 @@
                              :as           :json
                              :form-params  body})]
     (-> resp :body)))
-  
+
+
 (defn get-user-profile-photos
   "Gets user profile photos object"
   ([token user-id] (get-user-profile-photos token user-id {}))
@@ -60,7 +61,7 @@
          resp (http/post url {:content-type :json
                               :as           :json
                               :form-params  body})]
-      (-> resp :body))))
+     (-> resp :body))))
 
 
 (defn send-text
@@ -84,8 +85,8 @@
          resp  (http/post url {:content-type :json
                                :as           :json
                                :form-params  query})]
-         
      (-> resp :body))))
+
 
 (defn delete-text
   "Removing a message from the chat"
@@ -96,6 +97,7 @@
                               :as           :json
                               :form-params  query})]
     (-> resp :body)))
+
 
 (defn send-file [token chat-id options file method field filename]
   "Helper function to send various kinds of files as multipart-encoded"
@@ -171,6 +173,7 @@
    (assert-file-type sticker ["webp"])
    (send-file token chat-id options sticker "/sendSticker" "sticker" "sticker.webp")))
 
+
 (defn answer-inline
   "Sends an answer to an inline query"
   ([token inline-query-id results] (answer-inline token inline-query-id {} results))
@@ -181,6 +184,7 @@
                               :as           :json
                               :form-params  body})]
      (-> resp :body))))
+
 
 (defn answer-callback
   "Sends an answer to an callback query"
