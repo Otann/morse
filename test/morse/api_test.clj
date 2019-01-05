@@ -11,6 +11,32 @@
 (def inline-query-id 1337)
 (def callback-query-id 1338)
 
+(deftest get-file-request
+  (let [req (-> (api/get-file token 116)
+                (u/capture-request))
+        body (json/decode (slurp (:body req)) true)]
+
+    ; check that it is now post request
+    (is (= :post (:request-method req)))
+
+    ; check that default params are presented
+    (is (u/has-subset? {:file_id 116} [body]))))
+
+(deftest get-user-profile-photos-request
+  (let [options {:offset 2 :limit 5}
+        req     (-> (api/get-user-profile-photos token 1185125 options)
+                    (u/capture-request))
+        body    (json/decode (slurp (:body req)) true)]
+
+    ; check that it is now post request
+    (is (= :post (:request-method req)))
+
+    ; check that default params are presented
+    (is (u/has-subset? {:user_id 1185125} [body]))
+
+    ; check that a option has encoded
+    (is (u/has-subset? {:offset 2 :limit 5} [body]))))
+
 (deftest send-text-request
   (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
         req     (-> (api/send-text token chat-id options "message")
