@@ -75,6 +75,20 @@
                               :form-params  body})]
      (-> resp :body))))
 
+(defn forward-message
+  "Forwards a message from to a chat"
+  ([token chat-id from-chat-id message-id]
+   (forward-message token chat-id from-chat-id message-id {}))
+  ([token chat-id from-chat-id message-id options]
+   (let [url  (str base-url token "/forwardMessage")
+         body (into {:chat_id      chat-id
+                     :from_chat_id from-chat-id
+                     :message_id   message-id} options)
+         resp (http/post url {:content-type :json
+                              :as           :json
+                              :form-params  body})]
+     (-> resp :body))))
+
 (defn edit-text
   "Edits a sent message
   (https://core.telegram.org/bots/api#editmessagetext)"
