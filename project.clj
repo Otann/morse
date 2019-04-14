@@ -1,4 +1,4 @@
-(defproject morse "0.4.1"
+(defproject morse "0.4.2"
   :description "Telegram Bot API"
 
   :url "https://github.com/otann/morse/"
@@ -27,7 +27,8 @@
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
 
   :release-tasks [["vcs" "assert-committed"]
-                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["change" "version" "leiningen.release/bump-version" ":patch"]
+                  ["change" "version" "leiningen.release/bump-version" "minor"]
                   ["vcs" "commit"]
                   ["vcs" "tag"]
                   ["deploy" "clojars"]]
