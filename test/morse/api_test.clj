@@ -55,6 +55,22 @@
     ; check that a nested option has encoded
     (is (u/has-subset? {:reply_markup {:keyboard [[{:text "button"}]]}} [body]))))
 
+(deftest forward-message-request
+  (let [[chat-id
+         from-chat-id
+         message-id] [239 240 1]
+        req          (-> (api/forward-message token chat-id from-chat-id message-id {})
+                         (u/capture-request))
+        body         (json/decode (slurp (:body req)) true)]
+
+    ; check that it is now post request
+    (is (= :post (:request-method req)))
+
+    ; check that default params are presented
+    (is (u/has-subset? {:chat_id      chat-id
+                        :from_chat_id from-chat-id
+                        :message_id   message-id} [body]))))
+
 (deftest edit-text-request
   (let [options {:parse_mode "Markdown" :reply_markup {:keyboard [[{:text "button"}]]}}
         req     (-> (api/edit-text token chat-id message-id options "edited message")
