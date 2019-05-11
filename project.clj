@@ -27,8 +27,8 @@
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
 
   :release-tasks [["vcs" "assert-committed"]
-                  ["change" "version" "leiningen.release/bump-version" ":patch"]
-                  ["change" "version" "leiningen.release/bump-version" "minor"]
+                  ["change" "version" "leiningen.release/bump-version" "patch"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
                   ["vcs" "commit"]
                   ["vcs" "tag"]
                   ["deploy" "clojars"]]
