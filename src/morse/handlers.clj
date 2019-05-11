@@ -53,7 +53,7 @@
 
 (defn update-fn [path handler-fn]
   (fn [update]
-    (let [data (get-in update path)]
+    (if-let [data (get-in update path)]
       (handler-fn data))))
 
 
