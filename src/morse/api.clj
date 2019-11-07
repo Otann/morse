@@ -101,6 +101,18 @@
                                :form-params  query})]
      (-> resp :body))))
 
+(defn edit-reply-markup
+  "Edits only the reply markup of message
+  (https://core.telegram.org/bots/api#editmessagereplymarkup)"
+  ([token chat-id message-id reply-markup] (edit-reply-markup token chat-id message-id {} reply-markup))
+  ([token chat-id message-id options reply-markup]
+   (let [url   (str base-url token "/editMessageReplyMarkup")
+         query (into {:chat_id chat-id :reply_markup reply-markup :message_id message-id} options)
+         resp  (http/post url {:content-type :json
+                               :as           :json
+                               :form-params  query})]
+     (-> resp :body))))
+
 
 (defn delete-text
   "Removing a message from the chat"
