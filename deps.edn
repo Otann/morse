@@ -1,0 +1,11 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.9.0"}
+        org.clojure/tools.macro {:mvn/version "0.1.5"}
+        org.clojure/core.async {:mvn/version "0.4.474"}
+        org.clojure/tools.logging {:mvn/version "0.4.1"}
+        org.clojure/spec.alpha {:mvn/version "0.1.143"}
+        clj-stacktrace {:mvn/version "0.2.8"}
+        cheshire {:mvn/version "5.8.1"}
+        clj-http {:mvn/version "3.9.1"}}
+ :mvn/repos {"central" {:url "https://repo1.maven.org/maven2/"}
+             "clojars" {:url "https://repo.clojars.org/"}}}
