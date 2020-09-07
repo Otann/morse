@@ -3,7 +3,7 @@
   (:require [clojure.tools.logging :as log]
             [clojure.core.async :as a
              :refer [chan go go-loop thread
-                     >! <! close! alts!]]
+                     >!! >! <! close! alts!]]
             [morse.api :as api]))
 
 
@@ -21,21 +21,34 @@
    Returns channel with updates from Telegram"
   [running token opts]
   (let [updates (a/chan)
-        timeout (or (:timeout opts) 1000)]
+        ;; timeout for Telegram API in seconds
+        timeout (or (:timeout opts) 1)]
     (go-loop [offset 0]
-      (let [response (a/thread (api/get-updates token (merge opts {:offset offset})))
-            [data _] (a/alts! [running response])]
+      (let [;; fix for JDK bug https://bugs.openjdk.java.net/browse/JDK-8075484
+            ;; introduce additional timeout 10 times more that telegram's one
+            wait-timeout (a/go (a/<! (a/timeout (* 1000 timeout 10)))
+                               ::wait-timeout)
+            response     (api/get-updates-async token (assoc opts :offset offset))
+            [data _] (a/alts! [running response wait-timeout])]
         (case data
+          ;; running got closed by the user
           nil
-          (do (close! running)
+          (do (log/info "Stopping Telegram polling...")
+              (close! wait-timeout)
+              (close! updates))
+
+          ::wait-timeout
+          (do (log/error "HTTP request timed out, stopping polling")
+              (close! running)
               (close! updates))
 
           ::api/error
-          (do (log/warn "Got error from Telegram API, retrying in" timeout "ms")
-              (<! (a/timeout timeout))
-              (recur offset))
+          (do (log/warn "Got error from Telegram API, stopping polling")
+              (close! running)
+              (close! updates))
 
-          (do (doseq [upd data] (>! updates upd))
+          (do (close! wait-timeout)
+              (doseq [upd data] (>! updates upd))
               (recur (new-offset data offset))))))
     updates))
 

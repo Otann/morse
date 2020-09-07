@@ -53,11 +53,13 @@
 
 (defn update-fn [path handler-fn]
   (fn [update]
-    (let [data (get-in update path)]
+    (if-let [data (get-in update path)]
       (handler-fn data))))
+
 
 (defn message-fn [handler-fn]
   (update-fn [:message] handler-fn))
+
 
 (defmacro message
   [bindings & body]
@@ -67,6 +69,7 @@
 (defn inline-fn [handler-fn]
   (update-fn [:inline_query] handler-fn))
 
+
 (defmacro inline
   [bindings & body]
   `(inline-fn (fn [~bindings] ~@body)))
@@ -75,9 +78,11 @@
 (defn callback-fn [handler-fn]
   (update-fn [:callback_query] handler-fn))
 
+
 (defmacro callback
   [bindings & body]
   `(callback-fn (fn [~bindings] ~@body)))
+
 
 (comment "Examples of how to use handler definitions"
 
