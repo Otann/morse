@@ -10,7 +10,7 @@
 (def base-url "https://api.telegram.org/bot")
 
 (defn extract-data [resp]
-  (-> resp :body (json/parse-string true) :result))
+  (-> resp :body (json/parse-string true)))
 
 (defn get-updates-async
   "Receive updates from Bot via long-polling endpoint"
@@ -23,7 +23,7 @@
                      :async?       true}
          result     (a/chan)
          on-success (fn [resp]
-                      (if-let [data (extract-data resp)]
+                      (if-let [data (-> resp extract-data :result)]
                         (a/put! result data)
                         (a/put! result ::error))
                       (a/close! result))
