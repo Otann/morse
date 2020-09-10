@@ -11,6 +11,11 @@
 (def inline-query-id 1337)
 (def callback-query-id 1338)
 
+(deftest extract-data-from-update
+  (let [update-obj {:body "{\"key-num\": 1, \"key-ar-str\": [\"astring\"]}"}
+        result {:key-num 1 :key-ar-str ["astring"]}]
+    (is (= (api/extract-data update-obj) result))))
+
 (deftest get-file-request
   (let [req (-> (api/get-file token 116)
                 (u/capture-request))
