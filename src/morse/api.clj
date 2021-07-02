@@ -14,8 +14,8 @@
   (let [url  (str base-url token "/getFile")
         body {:file_id file-id}
         resp (http/post url {:content-type :json
-                             :form-params  body
-                             :as           :json})]
+                             :as           :json
+                             :form-params  body})]
     (-> resp :body)))
 
 
@@ -27,8 +27,8 @@
    (let [url  (str base-url token "/getUserProfilePhotos")
          body (into {:user_id user-id} options)
          resp (http/post url {:content-type :json
-                              :form-params  body
-                              :as           :json})]
+                              :as           :json
+                              :form-params  body})]
      (-> resp :body))))
 
 
@@ -42,8 +42,8 @@
                      :text    text}
                     options)
          resp (http/post url {:content-type :json
-                              :form-params  body
-                              :as           :json})]
+                              :as           :json
+                              :form-params  body})]
      (-> resp :body))))
 
 (defn forward-message
@@ -57,8 +57,8 @@
                      :message_id   message-id}
                     options)
          resp (http/post url {:content-type :json
-                              :form-params  body
-                              :as           :json})]
+                              :as           :json
+                              :form-params  body})]
      (-> resp :body))))
 
 (defn edit-text
@@ -72,8 +72,8 @@
                       :message_id message-id}
                      options)
          resp  (http/post url {:content-type :json
-                               :form-params  query
-                               :as           :json})]
+                               :as           :json
+                               :form-params  query})]
      (-> resp :body))))
 
 
@@ -84,8 +84,8 @@
         query {:chat_id    chat-id
                :message_id message-id}
         resp  (http/post url {:content-type :json
-                              :form-params  query
-                              :as           :json})]
+                              :as           :json
+                              :form-params  query})]
     (-> resp :body)))
 
 
@@ -123,8 +123,8 @@
         options-form (for [[key value] options]
                        {:part-name (name key) :content value})
         form         (into base-form options-form)
-        resp         (http/post url {:multipart form
-                                     :as        :json})]
+        resp         (http/post url {:as        :json
+                                     :multipart form})]
     (-> resp :body)))
 
 
@@ -187,8 +187,8 @@
                      :results         results}
                     options)
          resp (http/post url {:content-type :json
-                              :form-params  body
-                              :as           :json})]
+                              :as           :json
+                              :form-params  body})]
      (-> resp :body))))
 
 
@@ -204,6 +204,6 @@
                :text              text
                :show_alert        show-alert}
          resp (http/post url {:content-type :json
-                              :form-params  body
-                              :as           :json})]
+                              :as           :json
+                              :form-params  body})]
      (-> resp :body))))
