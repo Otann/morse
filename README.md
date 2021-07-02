@@ -14,7 +14,7 @@ Morse is a client for [Telegram](https://telegram.org) [Bot API](https://core.te
 
 ## Installation
 
-Add `[morse "0.4.3"]` to the dependency section in your project.clj file.
+Add `[morse "0.4.3"]` to the dependency section in your `project.clj` file.
 
 There is also a template which you can use to bootstrap your project:
 
@@ -25,14 +25,15 @@ There is also a template which you can use to bootstrap your project:
 
 ## Detecting user's actions
 
-Telegram sends updates about events in chats in form of
+Telegram sends updates about events in chats in the form of
 [Update](https://core.telegram.org/bots/api#update) objects.
 
 Inside those there could be commands, inline queries and many more.
-To help you with these Morse provides you helpers and some macros in
-`morse.handlers` namespace.
+To help you with handling these updates Morse provides some helper
+functions and macros in the `morse.handlers` namespace.
 
-If you are familiar with building web-service with Compojure,
+If you are familiar with building web services with 
+[Compojure](https://github.com/weavejester/compojure),
 you'll find similarities here:
 
 ```clojure
@@ -70,8 +71,8 @@ you'll find similarities here:
 
 ### Messages
 
-Receives [Message](https://core.telegram.org/bots/api#message) object as
-first parameter in a function or target of binding:
+Receives a [Message](https://core.telegram.org/bots/api#message) object as
+the first parameter in a function or target of binding:
 
 ```clojure
 (command-fn "start" (fn [msg] (println "Received command: " msg)))
@@ -80,7 +81,7 @@ first parameter in a function or target of binding:
 ```
 
 If you wish to process messages that are not prefixed by a command,
-there is also a helper:
+there is also a helper function:
 
 ```clojure
 (message-fn (fn [msg] (println "Received message: " msg)))
@@ -90,8 +91,8 @@ there is also a helper:
 
 ### Inline requests
 
-There is also a helper to define handlers for [InlineQueries](https://core.telegram.org/bots/api#inlinequery)
-in a similar form:
+There is also a helper function to similarly define handlers for
+[InlineQueries](https://core.telegram.org/bots/api#inlinequery):
 
 ```clojure
 (inline-fn (fn [inline] (println "Received inline: " inline)))
@@ -101,8 +102,9 @@ in a similar form:
 
 ### Callbacks
 
-You can provide handlers for [Callbacks](https://core.telegram.org/bots/api#answercallbackquery)
-which are sent from [inline keyboards](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating)
+Similarly, you can provide update handlers for 
+[Callbacks](https://core.telegram.org/bots/api#answercallbackquery)
+that are sent from _inline keyboards_.
 
 ```clojure
 (callback-fn (fn [data] (println "Received callback: " inline)))
@@ -110,26 +112,32 @@ which are sent from [inline keyboards](https://core.telegram.org/bots#inline-key
 (callback data (println "Received callback: " inline))
 ```
 
+See [docs](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating)
+on "Inline keyboards and on-the-fly updating" for more details.
+
 
 ## Starting your bot
 
-As Telegram documentation says, there are two ways of getting updates
-from the bot: webhook and long-polling.
+As the Telegram Bot API documentation states, there are
+two mutually exclusive ways of receiving updates:
+- via [webhook](#webhook), and
+- via [long-polling](#long-polling).
 
 #### Webhook
 
-If you develop a web application, you can use api call to
-[register](https://core.telegram.org/bots/api#setwebhook) one of your endpoints in Telegram:
+If you develop a web application, you can use API call to
+[register](https://core.telegram.org/bots/api#setwebhook) 
+one of your endpoints in Telegram:
 
 ```clojure
-(require '[morse.api :as api])
+(require '[morse.updates.api :as u-api])
 
-(api/set-webhook "abc:XXX" "http://example.com/handler")
+(u-api/set-webhook token "http://example.com/handler")
 ```
 
-Telegram will use this url to `POST` messages to it.
-You can also use handler to react on these messages.
-Here is quick example if you use [`compojure`](https://github.com/weavejester/compojure):
+Telegram will use this URL to `POST` updates to it.
+You can also use handler to react on these updates.
+Here is quick example if you use [Compojure](https://github.com/weavejester/compojure):
 
 ```clojure
 (defhandler bot-api
@@ -143,21 +151,22 @@ Here is quick example if you use [`compojure`](https://github.com/weavejester/co
 
 #### Long-polling
 
-This solution works perfectly if you don't plan on having a webserver
-or want to test your bot from a local machine.
+This solution works perfectly if you don't plan on having a web server
+or just want to test your bot on a local machine.
 
-Start the process by simply calling `start` function and pass it token and your handler:
+Start the process by simply calling `start!` function and pass it token
+and your updates handler:
 
 ```clojure
-(require '[morse.polling :as p])
+(require '[morse.updates.polling :as u-poll])
 
-(def channel (p/start token handler))
+(u-poll/start! token handler)
 ```
 
-Then if you want to stop created background processes, call stop on returned channel:
+Then, if you want to stop the created background process, call `stop!`:
 
 ```clojure
-(p/stop channel)
+(u-poll/stop!)
 ```
 
 
@@ -169,7 +178,11 @@ Use `morse.api` to interact with Telegram chats:
 (require '[morse.api :as api])
 ```
 
-Following methods from the API are implemented at the moment. All of them may use the advanced options by providing an additional option map argument. For all functions sending files File, ByteArray and InputStream are supported as arguments.
+Following methods from the API are implemented at the moment.
+All of them can use the advanced options provided by an additional map argument.
+
+For all functions sending files, the `File`, `ByteArray` and `InputStream` 
+are supported as an argument type.
 
 ### [`sendMessage`](https://core.telegram.org/bots/api#sendmessage)
 
@@ -187,7 +200,8 @@ You can use advanced options:
 
 ### [`sendPhoto`](https://core.telegram.org/bots/api#sendphoto)
 
-This sends a photo that will be displayed using the embedded image viewer where available.
+This sends a photo that will be displayed using the embedded image viewer 
+where available.
 
 ```clojure
 (require '[clojure.java.io :as io])
@@ -206,7 +220,8 @@ You can use advanced options:
 
 ### [`sendVideo`](https://core.telegram.org/bots/api#sendvideo)
 
-Sends the given mp4 file as a video to the chat which will be shown using the embedded player where available.
+Sends the given `mp4` file as a video to the chat which will be shown 
+using the embedded player where available.
 
 ```clojure
 (api/send-video token chat-id
@@ -216,7 +231,7 @@ Sends the given mp4 file as a video to the chat which will be shown using the em
 
 ### [`sendAudio`](https://core.telegram.org/bots/api#sendaudio)
 
-Sends the given mp3 file as an audio message to the chat.
+Sends the given `mp3` file as an audio note to the chat.
 
 ```clojure
 (api/send-audio token chat-id
@@ -225,7 +240,7 @@ Sends the given mp3 file as an audio message to the chat.
 
 ### [`sendSticker`](https://core.telegram.org/bots/api#sendsticker)
 
-Sends the given WebP image as a sticker to the chat.
+Sends the given `WebP` image as a sticker to the chat.
 
 ```clojure
 (api/send-sticker token chat-id
@@ -234,7 +249,9 @@ Sends the given WebP image as a sticker to the chat.
 
 ### [`sendDocument`](https://core.telegram.org/bots/api#senddocument)
 
-This method can be used for any other kind of file not supported by the other methods, or if you don't want telegram to make a special handling of your file (i.e. sending music as a voice message).
+This method can be used for any other file type that is not supported
+by other Bot API methods or in case you don't want the Telegram to do 
+special handling of your file (i.e. sending music as a voice message).
 
 ```clojure
 (api/send-document token chat-id
@@ -254,7 +271,7 @@ Sends an answer to an inline query.
 
 ### [`answerCallbackQuery`](https://core.telegram.org/bots/api#answercallbackquery)
 
-Sends an answer to an callback query sent from inline keyboards.
+Sends an answer to a callback query sent from an inline keyboard.
 
 ```clojure
 (api/answer-callback token
