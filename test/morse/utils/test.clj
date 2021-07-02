@@ -61,7 +61,7 @@
   (some #(map-subset? sub %) collection))
 
 
-(defn extract-query-params-set
+(defn extract-query-set
   "Get's query from the request and retrieves its parameters as a set
    of strings splitting them by an \"&\" char."
   [req]

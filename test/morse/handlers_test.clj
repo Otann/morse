@@ -5,24 +5,24 @@
 
 ;; aux fns
 
-(defn to-command
-  [cmd-name]
-  {:text (str "/" cmd-name)
+(defn command-message
+  [command]
+  {:text (str "/" command)
    :chat {:id "bar"}})
 
 
-(defn to-inline-query
-  [query-str]
+(defn inline-query
+  [query]
   {:id     0
    :from   {:user_id 0}
-   :query  query-str
+   :query  query
    :offset 0})
 
-(defn to-callback-query
-  [query-str]
+(defn callback-query
+  [query]
   {:id            0
    :from          {:user_id 0}
-   :message       query-str
+   :message       query
    :chat_instance 123
    :data          "test"})
 
@@ -32,47 +32,47 @@
 (deftest commands
   (let [start-handler    (m-h/command "start" msg msg)
         start-handler-fn (m-h/command-fn "start" (fn [msg] msg))
-        start-command    (to-command "start")]
+        start-command    (command-message "start")]
     (is (= start-command
            (start-handler {:message start-command})))
     (is (= start-command
            (start-handler-fn {:message start-command})))
 
     (is (= nil
-           (start-handler {:message (to-command "help")})))
+           (start-handler {:message (command-message "help")})))
     (is (= nil
-           (start-handler-fn {:message (to-command "help")})))
+           (start-handler-fn {:message (command-message "help")})))
 
     (is (= nil
-           (start-handler {:message (to-command "st")})))
+           (start-handler {:message (command-message "st")})))
     (is (= nil
-           (start-handler-fn {:message (to-command "st")})))
+           (start-handler-fn {:message (command-message "st")})))
 
     (is (= nil
-           (start-handler {:inline (to-inline-query "Kitten")})))
+           (start-handler {:inline (inline-query "Kitten")})))
     (is (= nil
-           (start-handler-fn {:inline (to-inline-query "Kitten")})))))
+           (start-handler-fn {:inline (inline-query "Kitten")})))))
 
 
 (deftest inlines
   (let [inline-handler    (m-h/inline msg msg)
         inline-handler-fn (m-h/inline-fn (fn [msg] msg))
-        query             (to-inline-query "cats")]
+        query             (inline-query "cats")]
     (is (= query
            (inline-handler {:inline_query query})))
     (is (= query
            (inline-handler-fn {:inline_query query})))
 
     (is (= nil
-           (inline-handler {:message (to-command "help")})))
+           (inline-handler {:message (command-message "help")})))
     (is (= nil
-           (inline-handler-fn {:message (to-command "help")})))))
+           (inline-handler-fn {:message (command-message "help")})))))
 
 
 (deftest callbacks
   (let [callback-handler (m-h/callback msg msg)
-        query (to-callback-query "31337")]
+        query (callback-query "31337")]
     (is (= (callback-handler {:callback_query query})
            query))
-    (is (= (callback-handler {:message (to-command "help")})
+    (is (= (callback-handler {:message (command-message "help")})
            nil))))

@@ -16,17 +16,17 @@
   (is (= #{"timeout=1" "offset=0" "limit=100"}
          (-> (m-u-api/get-updates token {})
              (m-u-t/capture-request-async)
-             (m-u-t/extract-query-params-set))))
+             (m-u-t/extract-query-set))))
 
   (is (= #{"timeout=1" "offset=0" "limit=200"}
          (-> (m-u-api/get-updates token {:limit 200})
              (m-u-t/capture-request-async)
-             (m-u-t/extract-query-params-set))))
+             (m-u-t/extract-query-set))))
 
   (is (= #{"timeout=1" "offset=31337" "limit=100"}
          (-> (m-u-api/get-updates token {:offset 31337})
              (m-u-t/capture-request-async)
-             (m-u-t/extract-query-params-set))))
+             (m-u-t/extract-query-set))))
 
   (testing "method returns part of the response body"
     (let [updates {:foo "bar"}]
