@@ -38,9 +38,8 @@
             response     (m-u-api/get-updates token curr-options)
             [data _] (a/alts! [running response wait-timeout])]
         (case data
-          nil ;; running channel got closed by the user
-          (do (log/info "Stopping Telegram polling...")
-              (a/close! wait-timeout)
+          nil ;; 'running' channel got closed by the user
+          (do (a/close! wait-timeout)
               (a/close! updates))
 
           ::wait-timeout
@@ -86,6 +85,7 @@
   ([token handler]
    (start! token handler nil))
   ([token handler options]
+   (log/info "Starting Telegram polling...")
    (let [running (reset! *running-channel (a/chan))
          options (merge default-options options)
          updates (create-producer running token options)]
@@ -95,6 +95,7 @@
 (defn stop!
   "Stops the updates long-polling process at the initiative of the user."
   []
+  (log/info "Stopping Telegram polling...")
   (a/close! @*running-channel))
 
 (defn has-stopped?
