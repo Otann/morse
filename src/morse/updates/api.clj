@@ -3,10 +3,10 @@
   (:require [clojure.core.async :as a]
             [clojure.tools.logging :as log]
 
+            [cheshire.core :as json]
             [clj-http.client :as http]
 
-            [morse.api :as m-api]
-            [morse.updates.json :as m-u-json]))
+            [morse.api :as m-api]))
 
 (defn get-updates
   "Receives incoming updates from the Telegram Bot API via long-polling.
@@ -22,7 +22,7 @@
          result     (a/chan)
          on-success (fn [resp]
                       (if-let [data (-> resp :body
-                                        m-u-json/parse-json-str
+                                        (json/parse-string true)
                                         :result)]
                         (a/put! result data)
                         (a/put! result ::error))
