@@ -1,7 +1,7 @@
 (ns morse.handlers-test
   (:require [clojure.test :refer :all]
 
-            [morse.handlers :as m-h]))
+            [morse.handlers :as handlers]))
 
 ;; aux fns
 
@@ -30,8 +30,8 @@
 ;; test cases
 
 (deftest commands
-  (let [start-handler    (m-h/command "start" msg msg)
-        start-handler-fn (m-h/command-fn "start" (fn [msg] msg))
+  (let [start-handler    (handlers/command "start" msg msg)
+        start-handler-fn (handlers/command-fn "start" (fn [msg] msg))
         start-command    (command-message "start")]
     (is (= start-command
            (start-handler {:message start-command})))
@@ -55,8 +55,8 @@
 
 
 (deftest inlines
-  (let [inline-handler    (m-h/inline msg msg)
-        inline-handler-fn (m-h/inline-fn (fn [msg] msg))
+  (let [inline-handler    (handlers/inline msg msg)
+        inline-handler-fn (handlers/inline-fn (fn [msg] msg))
         query             (inline-query "cats")]
     (is (= query
            (inline-handler {:inline_query query})))
@@ -70,8 +70,8 @@
 
 
 (deftest callbacks
-  (let [callback-handler (m-h/callback msg msg)
-        query (callback-query "31337")]
+  (let [callback-handler (handlers/callback msg msg)
+        query            (callback-query "31337")]
     (is (= (callback-handler {:callback_query query})
            query))
     (is (= (callback-handler {:message (command-message "help")})

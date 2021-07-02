@@ -2,8 +2,8 @@
   (:require [clojure.test :refer :all]
             [clojure.core.async :as a :refer [<!!]]
 
-            [morse.updates.polling :as m-u-poll]
-            [morse.utils.test :as m-u-t]))
+            [morse.updates.polling :as updates.polling]
+            [morse.utils.test :as utils.test]))
 
 ;; test data
 
@@ -30,26 +30,26 @@
 
 (deftest handler-receives-update
   (testing "handler fn receives an update from the poller"
-    (m-u-t/with-faked-updates
+    (utils.test/with-faked-updates
       sample-updates
 
       (let [result  (a/chan)
             handler (handler-for result)]
-        (m-u-poll/start! token handler {})
+        (updates.polling/start! token handler {})
         (is (= (first sample-updates)
                (<!!? result 1000)))
-        (m-u-poll/stop!)))))
+        (updates.polling/stop!)))))
 
 (deftest stopping-the-long-polling-process
   (testing "when an exception happens"
-    (m-u-t/with-faked-updates
+    (utils.test/with-faked-updates
       #(throw (ex-info "error" {}))
 
-      (m-u-poll/start! token identity {})
+      (updates.polling/start! token identity {})
       (<!! (a/timeout 1000))
-      (is (= true (m-u-poll/has-stopped?)))))
+      (is (= true (updates.polling/has-stopped?)))))
 
   (testing "when reaching a global timeout"
-    (m-u-poll/start! token identity {:timeout 0.001})
+    (updates.polling/start! token identity {:timeout 0.001})
     (<!! (a/timeout 1000))
-    (is (= true (m-u-poll/has-stopped?)))))
+    (is (= true (updates.polling/has-stopped?)))))

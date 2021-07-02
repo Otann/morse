@@ -6,7 +6,7 @@
             [cheshire.core :as json]
             [clj-http.client :as http]
 
-            [morse.api :as m-api]))
+            [morse.api :as api]))
 
 (defn get-updates
   "Receives incoming updates from the Telegram Bot API via long-polling.
@@ -14,7 +14,7 @@
    an Update object in case of success or an `:api/error` otherwise."
   ([token {:keys [timeout offset limit]
            :or   {timeout 1 offset 0 limit 100}}]
-   (let [url        (str m-api/base-url token "/getUpdates")
+   (let [url        (str api/base-url token "/getUpdates")
          request    {:query-params {:timeout timeout
                                     :offset  offset
                                     :limit   limit}
@@ -37,6 +37,6 @@
 (defn set-webhook
   "Specifies a URL to receive incoming updates via an outgoing webhook."
   [token webhook-url]
-  (let [url   (str m-api/base-url token "/setWebhook")
+  (let [url   (str api/base-url token "/setWebhook")
         query {:url webhook-url}]
     (http/get url {:as :json :query-params query})))

@@ -4,7 +4,7 @@
             [clojure.core.async.impl.protocols :refer [closed?]]
             [clojure.tools.logging :as log]
 
-            [morse.updates.api :as m-u-api])
+            [morse.updates.api :as updates.api])
   (:import [java.util.concurrent TimeUnit]))
 
 ;; impl details
@@ -35,7 +35,7 @@
       (let [wait-timeout (go (<! (a/timeout timeout-ms))
                              ::wait-timeout)
             curr-options (assoc options :offset offset)
-            response     (m-u-api/get-updates token curr-options)
+            response     (updates.api/get-updates token curr-options)
             [data _] (a/alts! [running response wait-timeout])]
         (case data
           nil ;; 'running' channel got closed by the user
@@ -47,7 +47,7 @@
               (a/close! running)
               (a/close! updates))
 
-          ::m-u-api/error
+          ::updates.api/error
           (do (log/warn "Got error from Telegram API, stopping polling")
               (a/close! running)
               (a/close! updates))
