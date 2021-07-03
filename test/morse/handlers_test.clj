@@ -5,21 +5,18 @@
 
 ;; aux fns
 
-(defn command-message
-  [command]
+(defn command-message [command]
   {:text (str "/" command)
    :chat {:id "bar"}})
 
 
-(defn inline-query
-  [query]
+(defn inline-query [query]
   {:id     0
    :from   {:user_id 0}
    :query  query
    :offset 0})
 
-(defn callback-query
-  [query]
+(defn callback-query [query]
   {:id            0
    :from          {:user_id 0}
    :message       query
