@@ -214,6 +214,8 @@ where available.
 You can use advanced options:
 
 ```clojure
+(require '[clojure.java.io :as io])
+
 (api/send-photo token chat-id
                 {:caption "Here is a map:"}
                 (io/file (io/resource "map.png")))
@@ -225,6 +227,8 @@ Sends the given `mp4` file as a video to the chat which will be shown
 using the embedded player where available.
 
 ```clojure
+(require '[clojure.java.io :as io])
+
 (api/send-video token chat-id
                 (io/file (io/resource "video.mp4")))
 ```
@@ -235,6 +239,8 @@ using the embedded player where available.
 Sends the given `mp3` file as an audio note to the chat.
 
 ```clojure
+(require '[clojure.java.io :as io])
+
 (api/send-audio token chat-id
                 (io/file (io/resource "audio.mp3")))
 ```
@@ -244,6 +250,8 @@ Sends the given `mp3` file as an audio note to the chat.
 Sends the given `WebP` image as a sticker to the chat.
 
 ```clojure
+(require '[clojure.java.io :as io])
+
 (api/send-sticker token chat-id
                   (io/file (io/resource "sticker.webp")))
 ```
@@ -255,6 +263,8 @@ by other Bot API methods or in case you don't want the Telegram to do
 special handling of your file (i.e. sending music as a voice message).
 
 ```clojure
+(require '[clojure.java.io :as io])
+
 (api/send-document token chat-id
                    (io/file (io/resource "document.pdf")))
 ```
@@ -267,7 +277,7 @@ Sends an answer to an inline query.
 (api/answer-inline token inline-query-id options
                    [{:type "gif"
                      :id "gif1"
-                     :gif_url "http://funnygifs/gif.gif"}])
+                     :gif_url "http://funnygifs/cat.gif"}])
 ```
 
 ### [`answerCallbackQuery`](https://core.telegram.org/bots/api#answercallbackquery)
@@ -275,14 +285,11 @@ Sends an answer to an inline query.
 Sends an answer to a callback query sent from an inline keyboard.
 
 ```clojure
-(api/answer-callback token
-                     callback-query-id
-                     text
-                     show-alert)
+(api/answer-callback token callback-query-id text show-alert)
 ```
 
 ## License
 
-Copyright © 2017 Anton Chebotaev
+Copyright © 2017-2021 Anton Chebotaev, Mark Sto, and contributors
 
 Distributed under the Eclipse Public License either version 1.0.
