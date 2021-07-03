@@ -9,8 +9,6 @@
 
 ;; impl details
 
-(defonce ^:private *running-channel (atom nil))
-
 (def ^:private default-options {:timeout 1})
 
 (defn- get-new-offset
@@ -23,8 +21,7 @@
 (defn- create-producer
   "Creates an incoming updates producer with the specified 'token' & 'options'.
    The passed 'running' channel have to stay empty and gets closed to stop the
-   long-polling process.
-   Returns a channel with the received update objects."
+   long-polling process. Returns a channel with the received update objects."
   [running token options]
   (let [updates    (a/chan)
         ;; NB: Fix for JDK bug https://bugs.openjdk.java.net/browse/JDK-8075484
@@ -78,7 +75,8 @@
 
 (defn start!
   "Starts the updates long-polling process with the given updates 'handler'
-   fn and the 'options' map for updates retrieval tuning.
+   fn and the 'options' map for updates retrieval tuning. Returns a channel
+   to be used later to stop the long-polling process.
 
    IMPORTANT: The passed 'handler' fn will be called in a blocking manner,
               so it must be non-blocking itself, i.e. return immediately."
@@ -86,21 +84,15 @@
    (start! token handler nil))
   ([token handler options]
    (log/info "Starting Telegram polling...")
-   (let [running (reset! *running-channel (a/chan))
+   (let [running (a/chan)
          options (merge default-options options)
          updates (create-producer running token options)]
      (create-consumer updates handler)
-     nil)))
+     running)))
 
 (defn stop!
-  "Stops the updates long-polling process at the initiative of the user."
-  []
+  "Stops the updates long-polling process at the initiative of the user
+   using the passed 'running' channel for this purpose."
+  [running]
   (log/info "Stopping Telegram polling...")
-  (a/close! @*running-channel))
-
-(defn has-stopped?
-  "Finds out if the updates long-polling process has stopped."
-  []
-  (let [run-chan @*running-channel]
-    (or (nil? run-chan)
-        (closed? run-chan))))
+  (a/close! running))

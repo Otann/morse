@@ -130,9 +130,9 @@ If you develop a web application, you can use API call to
 one of your endpoints in Telegram:
 
 ```clojure
-(require '[morse.updates.api :as u-api])
+(require '[morse.updates.api :as updates])
 
-(u-api/set-webhook token "http://example.com/handler")
+(updates/set-webhook token "http://example.com/handler")
 ```
 
 Telegram will use this URL to `POST` updates to it.
@@ -158,15 +158,16 @@ Start the process by simply calling `start!` function and pass it token
 and your updates handler:
 
 ```clojure
-(require '[morse.updates.polling :as u-poll])
+(require '[morse.updates.polling :as polling])
 
-(u-poll/start! token handler)
+(def polling-status (polling/start! token handler))
 ```
 
-Then, if you want to stop the created background process, call `stop!`:
+Then, if you want to stop the created background process, call `stop!`
+on the returned channel:
 
 ```clojure
-(u-poll/stop!)
+(u-poll/stop! polling-status)
 ```
 
 

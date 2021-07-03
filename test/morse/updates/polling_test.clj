@@ -34,22 +34,20 @@
       sample-updates
 
       (let [result  (a/chan)
-            handler (handler-for result)]
-        (updates.polling/start! token handler {})
+            handler (handler-for result)
+            running (updates.polling/start! token handler {})]
         (is (= (first sample-updates)
                (<!!? result 1000)))
-        (updates.polling/stop!)))))
+        (updates.polling/stop! running)))))
 
 (deftest stopping-the-long-polling-process
   (testing "when an exception happens"
     (utils.test/with-faked-updates
       #(throw (ex-info "error" {}))
 
-      (updates.polling/start! token identity {})
-      (<!! (a/timeout 1000))
-      (is (= true (updates.polling/has-stopped?)))))
+      (let [running (updates.polling/start! token identity {})]
+        (is (nil? (<!!? running 1000))))))
 
   (testing "when reaching a global timeout"
-    (updates.polling/start! token identity {:timeout 0.001})
-    (<!! (a/timeout 1000))
-    (is (= true (updates.polling/has-stopped?)))))
+    (let [running (updates.polling/start! token identity {:timeout 0.001})]
+      (is (nil? (<!!? running 1000))))))
