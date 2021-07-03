@@ -9,7 +9,6 @@
 
 (def token "fake-token")
 
-
 ;; test cases
 
 (deftest get-updates-request

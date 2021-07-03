@@ -14,7 +14,6 @@
 (def inline-query-id 1337)
 (def callback-query-id 1338)
 
-
 ;; test cases
 
 (deftest get-file-request
@@ -26,7 +25,6 @@
 
     ; check that default params are presented
     (is (utils.test/has-subset? {:file_id 116} [body]))))
-
 
 (deftest get-user-profile-photos-request
   (let [options {:offset 2 :limit 5}
@@ -41,7 +39,6 @@
 
     ; check that a option has encoded
     (is (utils.test/has-subset? {:offset 2 :limit 5} [body]))))
-
 
 (deftest send-text-request
   (let [options {:parse_mode   "Markdown"
@@ -62,11 +59,10 @@
     (is (utils.test/has-subset? {:reply_markup
                                  {:keyboard [[{:text "button"}]]}} [body]))))
 
-
 (deftest forward-message-request
   (let [[chat-id from-chat-id message-id] [239 240 1]
         req  (-> (api/forward-message
-                   token chat-id from-chat-id message-id {})
+                  token chat-id from-chat-id message-id {})
                  (utils.test/capture-request))
         body (json/decode (slurp (:body req)) true)]
 
@@ -78,12 +74,11 @@
                                  :from_chat_id from-chat-id
                                  :message_id   message-id} [body]))))
 
-
 (deftest edit-text-request
   (let [options {:parse_mode   "Markdown"
                  :reply_markup {:keyboard [[{:text "button"}]]}}
         req     (-> (api/edit-text
-                      token chat-id message-id options "edited message")
+                     token chat-id message-id options "edited message")
                     (utils.test/capture-request))
         body    (json/decode (slurp (:body req)) true)]
     ; check that it is now post request
@@ -101,7 +96,6 @@
     (is (utils.test/has-subset? {:reply_markup
                                  {:keyboard [[{:text "button"}]]}} [body]))))
 
-
 (deftest delete-text-request
   (let [req  (-> (api/delete-text token chat-id message-id)
                  (utils.test/capture-request))
@@ -112,7 +106,6 @@
     ; check that default params are presented
     (is (utils.test/has-subset? {:chat_id    chat-id
                                  :message_id message-id} [body]))))
-
 
 (deftest send-photo-request
   (let [data (byte-array (map byte "content"))
@@ -133,7 +126,6 @@
              (find #(= (:part-name %) "photo"))
              (fn [^String s] (.endsWith s "png"))))))
 
-
 (deftest answer-inline-request
   (let [res  {:type "gif" :id 31337 :gif_url "cat.gif"}
         req  (-> (api/answer-inline token inline-query-id
@@ -145,7 +137,6 @@
     (is (utils.test/has-subset? {:inline_query_id inline-query-id} [body]))
     (is (utils.test/has-subset? {:results [res]} [body]))
     (is (utils.test/has-subset? {:is_personal true} [body]))))
-
 
 (deftest answer-callback-request
   (let [req  (-> (api/answer-callback token callback-query-id "text" true)

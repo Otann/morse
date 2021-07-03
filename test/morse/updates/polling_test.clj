@@ -12,7 +12,6 @@
                       :message   {:text "foo"
                                   :chat {:id "bar"}}}])
 
-
 ;; aux fns
 
 (defn- <!!?
@@ -24,7 +23,6 @@
   [channel]
   (fn [upd]
     (a/put! channel upd)))
-
 
 ;; test cases
 

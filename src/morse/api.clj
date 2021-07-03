@@ -4,9 +4,7 @@
             [clojure.string :as string])
   (:import [java.io File]))
 
-
 (def base-url "https://api.telegram.org/bot")
-
 
 (defn get-file
   "Gets a URL of the file."
@@ -17,7 +15,6 @@
                              :as           :json
                              :form-params  body})]
     (-> resp :body)))
-
 
 (defn get-user-profile-photos
   "Gets the user profile photos object."
@@ -30,7 +27,6 @@
                               :as           :json
                               :form-params  body})]
      (-> resp :body))))
-
 
 (defn send-text
   "Sends message to the chat."
@@ -76,7 +72,6 @@
                                :form-params  query})]
      (-> resp :body))))
 
-
 (defn delete-text
   "Removes a message from the chat."
   [token chat-id message-id]
@@ -87,7 +82,6 @@
                               :as           :json
                               :form-params  query})]
     (-> resp :body)))
-
 
 (defn- is-file?
   "Is the 'value' a File?"
@@ -110,7 +104,6 @@
                          " Try sending the file using the `send-document`.")
                     {}))))
 
-
 (defn send-file
   "Helper function for sending files of various types with multipart encoding."
   [token chat-id options file method field filename]
@@ -127,7 +120,6 @@
                                      :multipart form})]
     (-> resp :body)))
 
-
 (defn send-photo
   "Sends an image to the chat."
   ([token chat-id image]
@@ -137,7 +129,6 @@
    (send-file token chat-id options
               image "/sendPhoto" "photo" "photo.png")))
 
-
 (defn send-document
   "Sends a document to the chat."
   ([token chat-id document]
@@ -145,7 +136,6 @@
   ([token chat-id options document]
    (send-file token chat-id options
               document "/sendDocument" "document" "document")))
-
 
 (defn send-video
   "Sends a video to the chat."
@@ -156,7 +146,6 @@
    (send-file token chat-id options
               video "/sendVideo" "video" "video.mp4")))
 
-
 (defn send-audio
   "Sends an audio note to the chat."
   ([token chat-id audio]
@@ -166,7 +155,6 @@
    (send-file token chat-id options
               audio "/sendAudio" "audio" "audio.mp3")))
 
-
 (defn send-sticker
   "Sends a sticker to the chat."
   ([token chat-id sticker]
@@ -175,7 +163,6 @@
    (assert-file-type sticker ["webp"])
    (send-file token chat-id options
               sticker "/sendSticker" "sticker" "sticker.webp")))
-
 
 (defn answer-inline
   "Sends an answer to the inline query."
@@ -190,7 +177,6 @@
                               :as           :json
                               :form-params  body})]
      (-> resp :body))))
-
 
 (defn answer-callback
   "Sends an answer to the callback query."

@@ -28,7 +28,6 @@
        ~@body
        @memory#)))
 
-
 (defmacro with-faked-updates
   "Executes 'body', faking the response from the `/getUpdates` method."
   [result & body]
@@ -39,12 +38,11 @@
                                                 ~result)
                                     response# {:status 200
                                                :body   (json/generate-string
-                                                         {"result" result#})}]
+                                                        {"result" result#})}]
                                 (on-success# response#))
                               (catch Exception e#
                                 (on-failure# e#))))]
      ~@body))
-
 
 (defn map-subset?
   "Checks if one map ('sub') is a subset of another map ('super')."
@@ -59,7 +57,6 @@
    of the provided map ('sub')."
   [sub collection]
   (some #(map-subset? sub %) collection))
-
 
 (defn extract-query-set
   "Get's query from the request and retrieves its parameters as a set

@@ -9,7 +9,6 @@
   {:text (str "/" command)
    :chat {:id "bar"}})
 
-
 (defn inline-query [query]
   {:id     0
    :from   {:user_id 0}
@@ -22,7 +21,6 @@
    :message       query
    :chat_instance 123
    :data          "test"})
-
 
 ;; test cases
 
@@ -50,7 +48,6 @@
     (is (= nil
            (start-handler-fn {:inline (inline-query "Kitten")})))))
 
-
 (deftest inlines
   (let [inline-handler    (handlers/inline msg msg)
         inline-handler-fn (handlers/inline-fn (fn [msg] msg))
@@ -64,7 +61,6 @@
            (inline-handler {:message (command-message "help")})))
     (is (= nil
            (inline-handler-fn {:message (command-message "help")})))))
-
 
 (deftest callbacks
   (let [callback-handler (handlers/callback msg msg)

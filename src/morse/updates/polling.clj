@@ -70,7 +70,6 @@
           (log/error t "Unable to handle update" data)))
       (recur))))
 
-
 ;; public fns
 
 (defn start!

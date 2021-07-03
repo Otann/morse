@@ -17,7 +17,6 @@
   (fn [update]
     (apply handling-one-by-one update handlers)))
 
-
 ;; public fns - defining handlers
 
 (defmacro defhandler
@@ -37,7 +36,6 @@
   (fn [update]
     (if-let [data (get-in update path)]
       (handler-fn data))))
-
 
 ;; public fns - commands
 
@@ -68,7 +66,6 @@
   [name bindings & body]
   `(command-fn ~name (fn [~bindings] ~@body)))
 
-
 ;; public fns - messages
 
 (defn message-fn
@@ -78,7 +75,6 @@
 (defmacro message
   [bindings & body]
   `(message-fn (fn [~bindings] ~@body)))
-
 
 ;; public fns - inline queries
 
@@ -90,7 +86,6 @@
   [bindings & body]
   `(inline-fn (fn [~bindings] ~@body)))
 
-
 ;; public fns - callback queries
 
 (defn callback-fn
@@ -100,7 +95,6 @@
 (defmacro callback
   [bindings & body]
   `(callback-fn (fn [~bindings] ~@body)))
-
 
 ;; examples
 

@@ -11,7 +11,8 @@
                  [clj-http "3.9.1"]
                  [clj-stacktrace "0.2.8"]]
 
-  :plugins [[lein-cloverage "1.0.10"]]
+  :plugins [[lein-cljfmt "0.8.0"]
+            [lein-cloverage "1.0.10"]]
 
   :profiles {:uberjar {:aot :all}
              :test    {:dependencies [[clj-http-fake "1.0.3"]]
