@@ -11,14 +11,20 @@
                  [clj-http "3.9.1"]
                  [clj-stacktrace "0.2.8"]]
 
-  :plugins [[lein-cljfmt "0.8.0"]
-            [lein-cloverage "1.0.10"]]
+  :plugins [[lein-cloverage "1.0.10"]]
 
-  :profiles {:uberjar {:aot :all}
-             :test    {:dependencies [[clj-http-fake "1.0.3"]]
-                       :plugins      [[com.jakemccrary/lein-test-refresh "0.14.0"]
-                                      [com.taoensso/timbre "4.1.4"]
-                                      [pjstadig/humane-test-output "0.8.2"]]}}
+  :profiles {:uberjar  {:aot :all}
+             :test     {:dependencies [[clj-http-fake "1.0.3"]]
+                        :plugins      [[com.jakemccrary/lein-test-refresh "0.14.0"]
+                                       [com.taoensso/timbre "4.1.4"]
+                                       [pjstadig/humane-test-output "0.8.2"]]}
+             :cljfmt   [:test
+                        {:plugins [[lein-cljfmt "0.8.0"]]
+                         :cljfmt  {:indents {as->  [[:inner 0]]
+                                             delay [[:inner 0]]}}}]
+             :eastwood [:test
+                        {:plugins  [[jonase/eastwood "0.7.1"]]
+                         :eastwood {:config-files ["eastwood.clj"]}}]}
 
   ;; Artifact deployment info
   :scm {:name "git"
