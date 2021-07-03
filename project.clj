@@ -13,7 +13,8 @@
 
   :plugins [[jonase/eastwood "0.7.1"]
             [lein-cljfmt "0.7.0"]
-            [lein-cloverage "1.0.10"]]
+            [lein-cloverage "1.0.10"]
+            [lein-kibit "0.1.8"]]
 
   :profiles {:uberjar  {:aot :all}
              :test     {:dependencies [[clj-http-fake "1.0.3"]]

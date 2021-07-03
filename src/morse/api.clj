@@ -14,7 +14,7 @@
         resp (http/post url {:content-type :json
                              :as           :json
                              :form-params  body})]
-    (-> resp :body)))
+    (:body resp)))
 
 (defn get-user-profile-photos
   "Gets the user profile photos object."
@@ -26,7 +26,7 @@
          resp (http/post url {:content-type :json
                               :as           :json
                               :form-params  body})]
-     (-> resp :body))))
+     (:body resp))))
 
 (defn send-text
   "Sends message to the chat."
@@ -40,7 +40,7 @@
          resp (http/post url {:content-type :json
                               :as           :json
                               :form-params  body})]
-     (-> resp :body))))
+     (:body resp))))
 
 (defn forward-message
   "Forwards a message from one chat to another."
@@ -55,7 +55,7 @@
          resp (http/post url {:content-type :json
                               :as           :json
                               :form-params  body})]
-     (-> resp :body))))
+     (:body resp))))
 
 (defn edit-text
   "Edits the text of a previously sent message."
@@ -70,7 +70,7 @@
          resp  (http/post url {:content-type :json
                                :as           :json
                                :form-params  query})]
-     (-> resp :body))))
+     (:body resp))))
 
 (defn delete-text
   "Removes a message from the chat."
@@ -81,7 +81,7 @@
         resp  (http/post url {:content-type :json
                               :as           :json
                               :form-params  query})]
-    (-> resp :body)))
+    (:body resp)))
 
 (defn- is-file?
   "Is the 'value' a File?"
@@ -118,7 +118,7 @@
         form         (into base-form options-form)
         resp         (http/post url {:as        :json
                                      :multipart form})]
-    (-> resp :body)))
+    (:body resp)))
 
 (defn send-photo
   "Sends an image to the chat."
@@ -176,7 +176,7 @@
          resp (http/post url {:content-type :json
                               :as           :json
                               :form-params  body})]
-     (-> resp :body))))
+     (:body resp))))
 
 (defn answer-callback
   "Sends an answer to the callback query."
@@ -192,4 +192,4 @@
          resp (http/post url {:content-type :json
                               :as           :json
                               :form-params  body})]
-     (-> resp :body))))
+     (:body resp))))

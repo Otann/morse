@@ -26,8 +26,7 @@
   (let [updates    (a/chan)
         ;; NB: Fix for JDK bug https://bugs.openjdk.java.net/browse/JDK-8075484
         ;;     Introduce an additional timeout 10 times longer than for Bot API.
-        timeout-ms (->> (* 10 (:timeout options))
-                        (.toMillis (TimeUnit/SECONDS)))]
+        timeout-ms (.toMillis (TimeUnit/SECONDS) (* 10 (:timeout options)))]
     (go-loop [offset 0]
       (let [wait-timeout (go (<! (a/timeout timeout-ms))
                              ::wait-timeout)

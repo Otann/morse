@@ -25,6 +25,8 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "project.clj" }}
 
+      - run: lein kibit
+
       - run: lein with-profile +cljfmt cljfmt check
 
       - run: lein with-profile +eastwood eastwood
