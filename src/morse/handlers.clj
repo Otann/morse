@@ -1,7 +1,7 @@
 (ns morse.handlers
   "Provides convenient means for defining the Telegram Bot API update handlers."
-  [:require [clojure.string :as s]
-            [clojure.tools.macro :as macro]])
+  (:require [clojure.string :as s]
+            [clojure.tools.macro :as macro]))
 
 ;; impl details
 
@@ -105,8 +105,7 @@
 ;; examples
 
 (comment
-  "Examples of how to use handler definitions"
-
+  "Use helper functions or macros to define simple handlers"
   ; create a handler that will react on "/start" command
   (command-fn "start" (fn [{user :from}] (println "Detected user:" user)))
 
@@ -114,10 +113,10 @@
   (command "start" {user :from} (println "Detected user:" user))
 
   ; ... which you can use without a destructuring syntax
-  (command "start" message (handle-text message))
+  (command "start" message (handle-text message)))
 
-
-  ; compose a handler from several ones
+(comment
+  "Compose a handler from several ones"
   (defhandler handler
     (command "start" [{{id :id :as chat} :chat}]
              (println "Bot joined a new chat:" chat)
@@ -129,8 +128,8 @@
 
     (message {{id :id} :chat :as message}
              (println "Intercepted message:" message)
-             (morse.api/send-text token id "I don't do a whole lot... yet.")))
+             (morse.api/send-text token id "I don't do a whole lot... yet."))))
 
-
-  ; then run in your REPL:
+(comment
+  "Then, run this in your REPL to start receiving updates"
   (morse.updates.polling/start token handler))
