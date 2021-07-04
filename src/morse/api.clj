@@ -133,7 +133,7 @@
 (defn of-type?
   "Does the extension of file match any of the
   extensions in valid-extensions?"
-  [file valid-extensions]
+  [^File file valid-extensions]
   (some #(-> file .getName (.endsWith %))
         valid-extensions))
 
