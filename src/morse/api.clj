@@ -40,6 +40,11 @@
         query {:url webhook-url}]
     (http/get url {:as :json :query-params query})))
 
+(defn delete-webhook
+  "Removes WebHook to stop receiving updates from chats"
+  [token]
+  (let [url (str base-url token "/deleteWebhook")]
+    (http/get url {:as :json})))
 
 (defn get-file
   "Gets url of the file"
