@@ -132,12 +132,15 @@ You can also use handler to react on these messages.
 Here is quick example if you use [`compojure`](https://github.com/weavejester/compojure):
 
 ```clojure
+(require '[compojure.core :refer [GET POST defroutes]]
+         '[compojure.route :as route])
+
 (defhandler bot-api
   (command "help" {{id :id} :chat}
     (api/send-text token id "Help is on the way")))
 
 (defroutes app-routes
-  (POST "/handler" {{updates :result} :body} (map bot-api updates))
+  (POST "/handler" {body :body} (bot-api body))
   (route/not-found "Not Found"))
 ```
 
