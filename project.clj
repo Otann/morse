@@ -5,11 +5,11 @@
 
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
                  [org.clojure/tools.macro "0.1.5"]
-                 [org.clojure/core.async "0.4.474"]
-                 [org.clojure/tools.logging "0.4.1"]
+                 [org.clojure/core.async "1.5.648"]
+                 [org.clojure/tools.logging "1.2.4"]
                  [clj-stacktrace "0.2.8"]
                  [cheshire "5.8.1"]
-                 [clj-http "3.9.1"]]
+                 [clj-http "3.12.3"]]
 
   :plugins [[lein-cloverage "1.0.10"]]
 

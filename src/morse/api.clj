@@ -75,6 +75,7 @@
                               :form-params  body})]
      (-> resp :body))))
 
+
 (defn forward-message
   "Forwards a message from to a chat"
   ([token chat-id from-chat-id message-id]
@@ -88,6 +89,7 @@
                               :as           :json
                               :form-params  body})]
      (-> resp :body))))
+
 
 (defn edit-text
   "Edits a sent message
