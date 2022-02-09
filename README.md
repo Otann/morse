@@ -266,6 +266,34 @@ Sends an answer to an callback query sent from inline keyboards.
                      show-alert)
 ```
 
+## Q-Code
+
+[Q-Codes](https://en.wikipedia.org/wiki/Q_code) in Morse are shorthands for common patterns.
+
+### Direct Reply
+This Q-code expects your handler to return a string which it will respond to the sender automatically.
+
+```clojure
+(require '[morse.qcodes :as q]
+         '[morse.handlers :as h])
+
+(defn just-say-hi [name]
+  (str "Hi " name "!"))
+
+(h/defhandler bot-api
+  (h/message {:keys [text]} (just-say-hi text)))
+
+;; direct-reply wraps your handler, it needs the token to send a response
+(def wrapped-handler (q/direct-reply token bot-api))
+```
+
+### Request to Morse
+This Q-code wraps your handler and returns a ring compatible handler. When you use webhooks this should enable you to use the same handler in your server as you've used for long-polling. It will take care of routing to the path and converting the JSON body to EDN.
+
+```clojure
+(def ring-handler (q/req->morse "/any-route" bot-api))
+```
+
 ## License
 
 Copyright © 2017 Anton Chebotaev
